@@ -47,33 +47,6 @@ Y.namespace('M.atto_warpwire').Button = Y.Base.create('button', Y.M.editor_atto.
 		});
     },
 
-	isIE: function() {
-		var ua = window.navigator.userAgent;
-		var msie = ua.indexOf('MSIE ');
-		var trident = ua.indexOf('Trident/');
-
-		// is internet explorer
-		if (msie > 0 || trident > 0) {
-			return true;
-		}
-
-		// other browser
-		return false;
-	},
-
-	createCORSRequest: function(method, url){
-		var xhr = new XMLHttpRequest();
-		if ("withCredentials" in xhr){
-			xhr.open(method, url, true);
-		} else if (typeof XDomainRequest != "undefined"){
-			xhr = new XDomainRequest();
-			xhr.open(method, url);
-		} else {
-			xhr = null;
-		}
-		return xhr;
-	},
-
 	// fn arg can be an object or a function, thanks to handleEvent
 	// read more about the explanation at: http://www.thecssninja.com/javascript/handleevent
 	addEvt: function(el, evt, fn, bubble) {
@@ -104,40 +77,21 @@ Y.namespace('M.atto_warpwire').Button = Y.Base.create('button', Y.M.editor_atto.
 		}
 	},
 
-	checkIEGet: function(ed, pluginId, checkGetCounter) {
-		var self = this;
-		self.editor = null;
+	GetURLParameter: function(sParam, sPageURL) {
+		if(typeof sPageURL == 'undefined')
+			return(null);
 
-		if(checkGetCounter >= 10) {
-			return(false);
+		sPageURL = sPageURL.substring(sPageURL.indexOf("?")+1);
+
+		var sURLVariables = sPageURL.split('&');
+		for (var i = 0; i < sURLVariables.length; i++) {
+			var sParameterName = sURLVariables[i].split('=');
+			if (sParameterName[0] == sParam) {
+				return sParameterName[1];
+			}
 		}
 
-		var xmlhttp = self.createCORSRequest("GET", self.get('warpwire_url').replace(/(\/)+$/g,'')+'/api/staging/c/'+pluginId+'/o/'+pluginId);
-
-		if (xmlhttp){
-			xmlhttp.onload = function(){
-				var frames = JSON.parse(xmlhttp.responseText);
-				for(var i=0; i < frames.length; i++) {
-					var imgNode  = new ed.dom.element('img');
-					imgNode.setAttribute('class', "_ww_img");
-					imgNode.setAttribute('longdesc', frames[i]._ww_src.replace("http://","https://"));
-					imgNode.setAttribute('src', frames[i]._ww_img.replace("http://","https://"));
-
-					if (frames[i]) {
-						ed.execCommand('mceInsertContent', false, imgNode.$.outerHTML);
-					}
-				}
-
-				return(true);
-			};
-
-			xmlhttp.onerror = function(){
-				checkGetCounter = checkGetCounter + 1;
-				setTimeout(self.checkIEGet(self.editor, pluginId, checkGetCounter),1000);
-			};
-
-			xmlhttp.send();
-		}
+		return(null);
 	},
 
 	_handleWarpwire : function() {
@@ -156,8 +110,27 @@ Y.namespace('M.atto_warpwire').Button = Y.Base.create('button', Y.M.editor_atto.
 				for(var i=0; i < frames.length; i++) {
 					var imgNode = document.createElement('img');
 					imgNode.setAttribute('class', "_ww_img");
-					imgNode.setAttribute('longdesc', frames[i]._ww_src.replace("http://","https://"));
-					imgNode.setAttribute('src', frames[i]._ww_img.replace("http://","https://"));
+
+					var img_src = frames[i]._ww_img.replace("http://","https://");
+					var source = frames[i]._ww_src.replace("http://","https://");
+
+					var sourceUrl = decodeURIComponent(source);
+					sourceUrl = sourceUrl.replace(/^\[warpwire:/,'');
+					sourceUrl = sourceUrl.replace(/]$/,'');
+
+					var img_width = self.GetURLParameter('width', sourceUrl);
+					if(img_width == null)
+						img_width = 400;
+					imgNode.setAttribute('width', img_width);
+					var img_height = self.GetURLParameter('height', sourceUrl);
+					if(img_height == null)
+						img_height = 400;					
+					imgNode.setAttribute('height', img_height);
+
+					var sep = img_src.indexOf('?') == -1 ? '?' : '&';
+					img_src = img_src + sep + 'ww_code=' + source;
+
+					imgNode.setAttribute('src', img_src);
 
 					if (frames[i]) {
 						try {
@@ -168,15 +141,6 @@ Y.namespace('M.atto_warpwire').Button = Y.Base.create('button', Y.M.editor_atto.
 				ev.data.message = '';
 			}
 		});
-
-		var pluginId = "";
-		if(self.isIE()) {
-			for (var j = 0; j < 32; j++) {
-				pluginId += Math.floor(Math.random() * 16).toString(16);
-			}
-		} else {
-			pluginId = "0";
-		}
 
 		var child = window.open(self.get('warpwire_url'),'_wwPlugin','width=400, height=500');
 
@@ -199,10 +163,6 @@ Y.namespace('M.atto_warpwire').Button = Y.Base.create('button', Y.M.editor_atto.
 				// we're here when the child window has been navigated away or closed
 				if (child.closed) {
 					clearInterval(interval);
-					// if IE, we are using a GET method rather than a window listener
-					if(self.isIE()) {
-						self.checkIEGet(self.editor, pluginId, 0);
-					}
 					return; 
 				}
 				// navigated to another domain  

@@ -38,6 +38,7 @@ function xmldb_atto_warpwire_install() {
     if (!$pos) {
         // Add imagedragdrop after image plugin.
         $toolbar = preg_replace('/(.+?=.+?)media($|\s|,)/m', '$1media, warpwire$2', $toolbar, 1);
+		set_config('toolbar', $toolbar, 'editor_atto');
     }
 
     return true;

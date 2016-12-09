@@ -35,6 +35,7 @@ class filter_warpwire extends moodle_text_filter {
     // match all warpwire shortcode instances returned from plugins
     if (preg_match_all('/<img.*?>/is', $text, $matches_code)) {
       foreach ($matches_code[0] as $ci => $code) {
+
         $textToReplace = $code;
 
         if (preg_match('/\[warpwire:(.*)?\]/is', urldecode($code), $matches_string)) {
@@ -70,6 +71,17 @@ class filter_warpwire extends moodle_text_filter {
             $iframe_width = $parameters['width'];
           if(!empty($parameters['height']))
             $iframe_height = $parameters['height'];       
+
+          if(class_exists('DOMDocument')){
+            $doc = new DOMDocument();
+            $doc->loadHTML($code);
+            $imageTags = $doc->getElementsByTagName('img');
+
+            foreach($imageTags as $tag) {
+              $iframe_width = $tag->getAttribute('width');
+              $iframe_height = $tag->getAttribute('height');
+            }
+          }
             
           $patterns = array('/URL/', '/WIDTH/', '/HEIGHT/');
           $replace = array($url, $iframe_width, $iframe_height);
