@@ -69,7 +69,6 @@ function warpwire_external_content($user, $course) {
     'lis_course_section_sourcedid' => $course->idnumber,
     'lti_message_type' => 'basic-lti-launch-request',
     'lti_version' => 'LTI-1p0',
-    'returnContext' => $_GET['url'],
     'roles' => $roles,
     'user_id' => $user->username,
     'lis_person_sourcedid' => $user->username,
@@ -78,6 +77,13 @@ function warpwire_external_content($user, $course) {
     'launch_presentation_return_url' => $CFG->wwwroot . '/local/warpwire/html/warpwire.html'
   );
 
+  if( ($lti_url_parts['host'] != $url_parts['host'])
+    || ($lti_url_parts['path'] != $url_parts['path'])
+    || (!empty($url_parts['query']))
+  ) {
+    $params['returnContext'] = $_GET['url'];
+  }
+  
   // build the OAuth signature
   $sig = build_signature('POST', get_config('local_warpwire', 'warpwire_lti'), $params, get_config('local_warpwire', 'warpwire_secret'));
 
