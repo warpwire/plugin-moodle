@@ -48,7 +48,7 @@ function warpwire_external_content($user, $course) {
   }  
 
   // user roles
-  $roles = lti_get_ims_role($user, null, $course->id);
+  $roles = lti_get_ims_role($user, null, $course->id, false);
 
   // LTI parameters
   $params = array(
