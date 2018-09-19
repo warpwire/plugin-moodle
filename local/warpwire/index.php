@@ -52,30 +52,49 @@ function warpwire_external_content($user, $course) {
 
   // LTI parameters
   $params = array(
-    'oauth_signature_method' => 'HMAC-SHA1',
-    'oauth_consumer_key' => get_config('local_warpwire', 'warpwire_key'),
     'oauth_version' => '1.0',
-    'oauth_timestamp' => time() + 300000,
-    'oauth_nonce' => md5(rand()),
+    'oauth_nonce' => md5(mt_rand()),
+    'oauth_timestamp' => time() + 600,
+    'oauth_consumer_key' => get_config('local_warpwire', 'warpwire_key'),
+    'user_id' => $user->id,
+    'lis_person_sourcedid' => $user->username,
+    'roles' => $roles,
     'context_id' => $course->id,
     'context_label' => $course->shortname,
-    'context_title' => $course->fullname,
-    'tool_consumer_info_product_family_code' => 'moodle',
-    'ext_lms' => 'moodle-2',
-    'lis_person_name_family' => $user->lastname,
-    'lis_person_name_full' => $user->firstname . ' ' . $user->lastname,
-    'lis_person_name_given' => $user->firstname,
-    'lis_person_contact_email_primary' => $user->email,
-    'lis_course_section_sourcedid' => $course->idnumber,
-    'lti_message_type' => 'basic-lti-launch-request',
-    'lti_version' => 'LTI-1p0',
-    'roles' => $roles,
-    'user_id' => $user->username,
-    'lis_person_sourcedid' => $user->username,
-    'custom_context_id' => $course->id,
-    'custom_plugin_info' => '',
-    'launch_presentation_return_url' => $CFG->wwwroot . '/local/warpwire/html/warpwire.html'
   );
+  if ($course->format == 'site') {
+    $parms['context_type'] = 'Group';
+  } else {
+    $params['context_type'] = 'CourseSection';
+    $params['lis_course_section_sourcedid'] = $course->idnumber;
+  }
+
+  $params['lis_course_section_sourcedid'] = $course->idnumber;
+  $params['lis_person_name_given'] = $user->firstname;
+  $params['lis_person_name_family'] = $user->lastname;
+  $params['lis_person_name_full'] = fullname($user); 
+  $params['ext_user_username'] = $user->username;
+  $params['lis_person_contact_email_primary'] = $user->email;
+  $params['launch_presentation_locale'] = current_language();
+  $params['ext_lms'] = 'moodle-2';
+  $params['tool_consumer_info_product_family_code'] = 'moodle';
+  $params['tool_consumer_info_version'] = strval($CFG->version);
+  // Add oauth_callback to be compliant with the 1.0A spec.
+  $params['oauth_callback'] = 'about:blank';  
+  $params['lti_version'] = 'LTI-1p0';
+  $params['lti_message_type'] = 'ContentItemSelectionRequest';
+
+  if (!empty($CFG->mod_lti_institution_name)) {
+    $params['tool_consumer_instance_name'] = trim(html_to_text($CFG->mod_lti_institution_name, 0));
+  } else {
+    $params['tool_consumer_instance_name'] = get_site()->shortname;
+  }
+
+  $params['tool_consumer_instance_description'] = trim(html_to_text(get_site()->fullname, 0));
+  $params['launch_presentation_return_url'] = $CFG->wwwroot . '/local/warpwire/html/warpwire.html';
+  $params['oauth_signature_method'] = 'HMAC-SHA1';
+  $params['custom_context_id'] = $course->id;
+  $params['custom_plugin_info'] = '';
 
   if( ($lti_url_parts['host'] != $url_parts['host'])
     || ($lti_url_parts['path'] != $url_parts['path'])
