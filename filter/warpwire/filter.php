@@ -23,14 +23,15 @@ class filter_warpwire extends moodle_text_filter {
     global $COURSE, $CFG;
 
     // iframe template element
-    $iframe_template = '<iframe src="URL"
-      width="WIDTH"
+    $iframe_template = '<iframe 
+    	width="WIDTH"
       height="HEIGHT"
+    	src="URL"
       frameborder="0"
-      allowfullscreen="allowfullscreen"
-      mozallowfullscreen="mozallowfullscreen"
-      webkitallowfullscreen="webkitallowfullscreen">
-      </iframe>';
+      scrolling="0"
+      allow="autoplay *; encrypted-media *; fullscreen *;"
+      title="Warpwire Media"
+      allowfullscreen></iframe>';
 
     // match all warpwire shortcode instances returned from plugins
     if (preg_match_all('/<img.*?>/is', $text, $matches_code)) {
