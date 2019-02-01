@@ -80,9 +80,12 @@ $partsString = http_build_query($parts, '', '&');
 
 $url = $CFG->wwwroot . '/local/warpwire/?' .$partsString;
 
-$content = '<iframe id="contentframe" height="600px" width="100%" 
-    allowfullscreen="allowfullscreen" mozallowfullscreen="mozallowfullscreen" 
-    webkitallowfullscreen="webkitallowfullscreen"src="'.$url.'" style="height: 510px;"></iframe>';
+$content = '<iframe 
+		id="contentframe" height="600" width="100%" 
+		src="'.$url.'"
+		frameborder="0" scrolling="0" 
+		allow="autoplay *; encrypted-media *; fullscreen *; camera *; microphone *;" 
+		title="Warpwire Media Library" allowfullscreen></iframe>';
 
 echo $content;
 
