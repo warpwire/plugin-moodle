@@ -28,3 +28,5 @@ The Warpwire Plugin for Moodle allows your users to insert protected Warpwire as
 
 ## Usage
 Warpwire content can now be inserted into content items for which the WYSIWYG editor is enabled. Simply click the Warpwire button in the editor, and you will be taken to your Warpwire application, from which content can be embedded into your Moodle instance.
+
+![Moodle: Embed via Test Editor](https://github.com/warpwire/warpwire-moodle-3/blob/master/moodle-embed.jpg)
