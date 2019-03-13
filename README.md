@@ -2,8 +2,8 @@
 The Warpwire Plugin for Moodle allows your users to insert protected Warpwire assets into any content item for which the WYSIWYG editor is available.
 
 ## Install
-1. Download the five plugin zip files by going to the **Releases** link above the file listing, and selecting the latest stable release.
-2. Navigate to '**Site Administration**', click the '**Plugins**' item, and click the '**Install Plugins**' link.
+1. Download the five plugin zip files by going to the **Releases** link above the file listing, and selecting the latest release.
+2. Navigate to **Site Administration**, click the **Plugins** item, and click the **Install Plugins** link.
 3. Drag or select for upload the `local` plugin Zip file and click **Install Plugin from Zip FIle**.
 4. Click **Validate** on the next page.
 5. Click **Continue** on the next page.
@@ -11,7 +11,7 @@ The Warpwire Plugin for Moodle allows your users to insert protected Warpwire as
 7. Repeat steps 2 through 6 for the remaining plugin Zip files in this order: `filter`, `editor_atto`, `editor_mce`, `block`.
 
 ## Configure
-1. Navigate to '**Site Administration**', click the '**Plugins**' tab, and in the '**Filters**' section, click the '**Manage Filters**' link.
+1. Navigate to **Site Administration**, click the **Plugins** tab, and in the **Filters** section, click the **Manage Filters** link.
 
 ![Moodle: Plugins](https://github.com/warpwire/warpwire-moodle-3/blob/master/moodle-plugins.png)
 
@@ -20,7 +20,7 @@ The Warpwire Plugin for Moodle allows your users to insert protected Warpwire as
 ![Moodle: Plugins: Filters: Manage Filters](https://github.com/warpwire/warpwire-moodle-3/blob/master/moodle-manage-filters.png)
 
 2. Ensure that the 'Warpwire filter' has the 'Active?' setting selected to 'On', and the 'Apply to' setting is set to 'Content'.
-3. Navigate to '**Site Administration**', click the '**Plugins**' tab, and in the '**Local plugins**' section, click the '**Warpwire Plugin Configuration**' link.
+3. Navigate to **Site Administration**, click the **Plugins** tab, and in the **Local plugins** section, click the **Warpwire Plugin Configuration** link.
 
 ![Moodle: Local Plugins](https://github.com/warpwire/warpwire-moodle-3/blob/master/moodle-local-plugins.png)
 
