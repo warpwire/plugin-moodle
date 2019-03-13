@@ -2,7 +2,8 @@
 The Warpwire Plugin for Moodle allows your users to insert protected Warpwire assets into any content item for which the WYSIWYG editor is available.
 
 ## Install
-1. Download the five plugin zip files by going to the **Releases** link above the file listing, and selecting the latest release.
+1. Download the five plugin zip files by going to https://github.com/warpwire/warpwire-moodle-3/releases, and clicking on the latest release. The zip files will
+be in the **Assets** section.
 2. Navigate to **Site Administration**, click the **Plugins** item, and click the **Install Plugins** link.
 3. Drag or select for upload the `local` plugin Zip file and click **Install Plugin from Zip FIle**.
 4. Click **Validate** on the next page.
