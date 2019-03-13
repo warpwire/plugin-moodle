@@ -14,15 +14,22 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-defined('MOODLE_INTERNAL') || die('Invalid access');
+/**
+ * Atto text editor integration version file.
+ *
+ * @package    atto_warpwire
+ * @copyright  2016 Warpwire, Inc.  <warpwire.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
-$plugin                     = new StdClass();
-$plugin->component          = 'tinymce_warpwire';
-$plugin->version            = 2015051200;
-$plugin->requires           = 2012062500;
-$plugin->release            = '3.0.7';
-$plugin->maturity           = MATURITY_STABLE;
-$plugin->dependencies       = array(
-    'local_warpwire'  => 2015050500,
-    'filter_warpwire' => 2015050500,
+defined('MOODLE_INTERNAL') || die();
+
+$plugin->component = 'atto_warpwire';
+$plugin->version   = 2019030600;
+$plugin->release   = '3.0.8';
+$plugin->maturity  = MATURITY_STABLE;
+$plugin->requires  = 2015111607;
+
+$plugin->dependencies = array(
+    'local_warpwire' => 2019030600
 );

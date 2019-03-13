@@ -14,20 +14,14 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Defines the version and other meta-info about the Warpwire Activity Module
- *
- * @package    mod_warpwire
- * @copyright  2016 Warpwire <https://warpwire.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+defined('MOODLE_INTERNAL') || die('Invalid access');
 
-defined('MOODLE_INTERNAL') || die();
+$plugin = new stdClass();
 
-$plugin->component = 'mod_warpwire';
-$plugin->version            = 2015111000;
-$plugin->requires           = 2015111000;
-$plugin->release = 'v0.0';
-$plugin->maturity = MATURITY_ALPHA;
-$plugin->cron = 0;
-$plugin->dependencies = array('local_warpwire' => 2015111000);
+$plugin->component = 'local_warpwire';
+$plugin->version   = 2019030600;
+$plugin->release   = '3.0.8';
+$plugin->maturity  = MATURITY_STABLE;
+$plugin->requires  = 2015111607;
+
+$plugin->dependencies  = array();
