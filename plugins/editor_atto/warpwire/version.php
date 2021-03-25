@@ -25,11 +25,11 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'atto_warpwire';
-$plugin->version   = 2019030600;
-$plugin->release   = '3.0.8';
+$plugin->version   = 2021032500;
+$plugin->release   = '3.0.9';
 $plugin->maturity  = MATURITY_STABLE;
-$plugin->requires  = 2015111607;
+$plugin->requires  = 2019111800;
 
 $plugin->dependencies = array(
-    'local_warpwire' => 2019030600
+    'local_warpwire' => 2021032500
 );
