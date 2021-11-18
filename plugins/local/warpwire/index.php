@@ -9,6 +9,15 @@ require_once "../../config.php";
 require_once($CFG->dirroot.'/mod/lti/lib.php');
 require_once($CFG->dirroot.'/mod/lti/locallib.php');
 
+$wstoken = optional_param('wstoken', '', PARAM_ALPHANUM);
+
+if (!isloggedin() && !isguestuser() && $wstoken) {
+    // This will authenticate the browser session to the user associated with the wstoken.
+    require_once($CFG->dirroot . '/webservice/lib.php');
+    $webservicelib = new webservice();
+    $webservicelib->authenticate_user($wstoken);
+}
+
 require_login();
 
 global $USER, $COURSE;

@@ -20,7 +20,7 @@ class filter_warpwire extends moodle_text_filter
 {
     public function filter($text, array $options = array())
     {
-        global $COURSE, $PAGE, $CFG;
+        global $COURSE, $PAGE, $CFG, $USER;
 
         // iframe template element
         $iframe_template = '<iframe 
@@ -36,6 +36,13 @@ class filter_warpwire extends moodle_text_filter
         // collect information about context to send to iframe
         $modInfo = get_fast_modinfo($COURSE);
         $sections = $modInfo->get_section_info_all();
+
+        // Check if this is serving data to the mobile app.
+        $wstoken = null;
+        if(WS_SERVER){
+            require_once($CFG->dirroot . '/admin/tool/mobile/lib.php');
+            $wstoken = tool_mobile_get_token($USER->id);
+        }
 
         // match all warpwire shortcode instances returned from plugins
         if (preg_match_all('/<img.*?>/is', $text, $matches_code)) {
@@ -75,6 +82,11 @@ class filter_warpwire extends moodle_text_filter
                         'module_id' => isset($PAGE->cm->id) ? $PAGE->cm->id : '',
                         'section_id' => $currentSectionId
                     );
+
+                    // Append wstoken if defined.
+                    if(!empty($wstoken)){
+                        $parts['wstoken'] = $wstoken->token;
+                    }
 
                     $partsString = http_build_query($parts, '', '&');
 
@@ -145,6 +157,11 @@ class filter_warpwire extends moodle_text_filter
                     'module_id' => isset($PAGE->cm->id) ? $PAGE->cm->id : '',
                     'section_id' => $currentSectionId
                 );
+
+                // Append wstoken if defined.
+                if(!empty($wstoken)){
+                    $parts['wstoken'] = $wstoken->token;
+                }
 
                 $partsString = http_build_query($parts, '', '&');
 
