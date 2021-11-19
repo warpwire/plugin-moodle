@@ -25,12 +25,12 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'mod_warpwire';
-$plugin->version   = 2021040500;
-$plugin->release   = '3.1.0';
+$plugin->version   = 2021111800;
+$plugin->release   = '4.0.0.';
 $plugin->maturity  = MATURITY_STABLE;
 $plugin->requires  = 2019111800;
 $plugin->cron      = 0;
 
 $plugin->dependencies = array(
-    'local_warpwire' => 2021040500
+    'local_warpwire' => 2021111800
 );
