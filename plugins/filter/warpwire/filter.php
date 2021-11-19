@@ -22,6 +22,11 @@ class filter_warpwire extends moodle_text_filter
     {
         global $COURSE, $PAGE, $CFG, $USER;
 
+        // If upgrade is running, skip this filter. This filter relies on library functions that will throw an error if called during an upgrade.
+        if(!empty($CFG->upgraderunning)){
+            return $text;
+        }
+
         // iframe template element
         $iframe_template = '<iframe 
           width="WIDTH"
