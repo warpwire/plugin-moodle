@@ -25,7 +25,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['modulename'] = 'Warpwire';
+$string['modulename'] = 'Media Library';
+$string['modulenameplural'] = 'Media Libraries';
 $string['warpwire:addinstance'] = 'Add Warpwire Secure Video';
 $string['warpwire:submit'] = 'Submit warpwire';
 $string['warpwire:view'] = 'View warpwire';

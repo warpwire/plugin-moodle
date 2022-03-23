@@ -19,12 +19,12 @@ defined('MOODLE_INTERNAL') || die('Invalid access');
 $plugin = new StdClass();
 
 $plugin->component = 'tinymce_warpwire';
-$plugin->version   = 2021111800;
-$plugin->release   = '4.0.0.';
+$plugin->version   = 2022032300;
+$plugin->release   = '4.0.1';
 $plugin->maturity  = MATURITY_STABLE;
 $plugin->requires  = 2019111800;
 
 $plugin->dependencies = array(
-    'local_warpwire' => 2021111800,
-    'filter_warpwire' => 2021111800
+    'local_warpwire' => 2022032300,
+    'filter_warpwire' => 2022032300
 );

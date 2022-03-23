@@ -15,4 +15,6 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 $string['pluginname'] = 'Warpwire';
+$string['modulename'] = 'Warpwire';
+$string['modulenameplural'] = 'Warpwire';
 $string['warpwire:desc'] = 'Warpwire';

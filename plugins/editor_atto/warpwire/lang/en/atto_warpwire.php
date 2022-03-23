@@ -23,3 +23,5 @@
  */
 
 $string['pluginname'] = 'Warpwire';
+$string['modulename'] = 'Warpwire';
+$string['modulenameplural'] = 'Warpwire';

@@ -16,6 +16,8 @@
 
 // Plugin settings.
 $string['pluginname'] = 'Warpwire Plugin Configuration';
+$string['modulename'] = 'Warpwire Plugin Configuration';
+$string['modulenameplural'] = 'Warpwire Plugin Configurations';
 
 $string['setting_heading_desc'] = 'These settings customize the method in which your Moodle instance connects to Warpwire.<br/><br/>You may need to purge your Moodle caches after changing these settings for them to take effect.<br/><br/>';
 
