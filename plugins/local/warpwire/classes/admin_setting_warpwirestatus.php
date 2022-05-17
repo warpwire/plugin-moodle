@@ -40,24 +40,9 @@ class admin_setting_warpwirestatus extends \admin_setting {
     }
 
     public function output_html($data, $query='') {
-        global $OUTPUT;
-
-        // $html = $OUTPUT->box_start('generalbox');
         $html = '';
 
-        // TODO: this is for debugging only
-        // $table = new \html_table();
-        // $data = [];
-        // foreach (get_config('local_warpwire') as $key => $value) {
-        //     $data[] = [$key, $value];
-        // }
-        // $table->data = $data;
-        // $table->head = ['Key', 'Value'];
-        // $html .= \html_writer::table($table);
-
         $isConfigured = \local_warpwire\utilities::isConfigured();
-        $status = get_config('local_warpwire', 'setup_status');
-        $statusMessage = get_config('local_warpwire', 'setup_status_message');
 
         if ($isConfigured) {
             $html .= \html_writer::tag('p', get_string('notice_usage_limits', 'local_warpwire'));
@@ -127,25 +112,26 @@ class admin_setting_warpwirestatus extends \admin_setting {
                 \local_warpwire\utilities::errorLogLong((string)$ex, 'WARPWIRE');
                 $html .= \html_writer::tag('p', get_string('notice_error_usage', 'local_warpwire'));
             }
-        } elseif (!empty($status)) {
-            $html .= \html_writer::tag('p', strtoupper($status) . ': ' . $statusMessage);
-
-            if (in_array(\strtolower($status), ['error', 'invalid'])) {
-                $html .= \html_writer::tag('p', 'Please contact support or try again.');
-                $html .= $this->createStartTrialButton();
-            }
+        } elseif (!empty(get_config('local_warpwire', 'setup_status'))) {
+            $html .= \html_writer::script('', new \moodle_url('/local/warpwire/checkstatus.js'));
+            $html .= \html_writer::tag('p', 'Checking status...', ['id' => 'warpwire_status_container']);
+            $html .= $this->createStartTrialButton('warpwire_trial_button');
         } else {
             $html .= \html_writer::tag('p', get_string('notice_getting_started', 'local_warpwire'));
             $html .= $this->createStartTrialButton();
         }
 
-        // $html .= $OUTPUT->box_end();
-
         return highlight($query, $html);
     }
 
-    private function createStartTrialButton() {
-        return \html_writer::start_div('box generalbox py-3')
+    private function createStartTrialButton($id = '') {
+        if ($id != '') {
+            $attrs = ['id' => $id];
+        } else {
+            $attrs = [];
+        }
+
+        return \html_writer::start_div('box generalbox py-3', $attrs)
              . \html_writer::link(new \moodle_url('/local/warpwire/setup.php', ['action' => 'setup', 'sesskey' => sesskey()]), get_string('action_start_trial', 'local_warpwire'), ['class' => 'btn btn-primary'])
              . \html_writer::end_div();
     }

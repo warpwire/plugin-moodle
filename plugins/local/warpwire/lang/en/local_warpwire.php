@@ -55,6 +55,7 @@ $string['action_reset_cancel'] = 'Go Back';
 $string['notice_invalid_action'] = 'Invalid action.';
 
 $string['notice_setup_error'] = 'Error: unable to initiate Warpwire trial. Please contact support.';
+$string['notice_setup_error_client_exists'] = 'Error: Warpwire site already exists. Please contact support for manual setup.';
 
 $string['notice_setup_initiated'] = 'Trial setup initiated. You may close this window.';
 

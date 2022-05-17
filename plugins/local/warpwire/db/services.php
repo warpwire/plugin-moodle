@@ -14,14 +14,28 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-defined('MOODLE_INTERNAL') || die('Invalid access');
+namespace local_warpwire;
 
-$plugin = new stdClass();
+$services = [
+    'warpwiresetupservice' => [
+        'functions' => ['local_warpwire_check_setup_status'],
+        'requiredcapability' => '',
+        'restrictedusers' => 0,
+        'enabled' => 1,
+        'shortname' => '',
+        'downloadfils' => '',
+        'uploadfiles' => ''
+    ]
+];
 
-$plugin->component = 'local_warpwire';
-$plugin->version   = 2022032301;
-$plugin->release   = '4.0.1';
-$plugin->maturity  = MATURITY_STABLE;
-$plugin->requires  = 2019111800;
-
-$plugin->dependencies  = array();
+$functions = [
+    'local_warpwire_check_setup_status' => [
+        'classname' => 'local_warpwire\check_setup_status',
+        'methodname' => 'get_status',
+        'description' => 'Checks Warpwire setup status',
+        'type' => 'read',
+        'ajax' => true,
+        'services' => [],
+        'capabilities' => ''
+    ]
+];

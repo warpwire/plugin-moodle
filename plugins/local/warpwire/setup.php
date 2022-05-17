@@ -94,11 +94,11 @@ function setupTrial() {
 
         if (strstr($ex->getMessage(), 'Client already exists')) {
             set_config('setup_status_message', 'Warpwire site already exists. Please contact support to get setup information.', 'local_warpwire');
+            messageAndExit(get_string('notice_setup_error_client_exists', 'local_warpwire'));
         } else {
             set_config('setup_status_message', 'Setup request failed.', 'local_warpwire');
+            messageAndExit(get_string('notice_setup_error', 'local_warpwire'));
         }
-
-        messageAndExit(get_string('notice_setup_error', 'local_warpwire'));
     }
 
     try {

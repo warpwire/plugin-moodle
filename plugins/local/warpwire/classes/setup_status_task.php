@@ -86,6 +86,9 @@ class setup_status_task extends \core\task\adhoc_task {
             set_config('warpwire_admin_username', $initialAdminCredentials['unique_id'], 'local_warpwire');
             set_config('warpwire_admin_password', $initialAdminCredentials['password'], 'local_warpwire');
 
+            set_config('setup_status', null, 'local_warpwire');
+            set_config('setup_status_message', null, 'local_warpwire');
+
             return true;
         } catch (\Throwable $ex) {
             \local_warpwire\utilities::stdoutLogLong((string)$ex, 'WARPWIRE STATUS');
