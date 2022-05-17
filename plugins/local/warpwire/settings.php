@@ -18,47 +18,17 @@ defined('MOODLE_INTERNAL') || die('Invalid access');
 
 require_once('lang/en/local_warpwire.php');
 
+print_r(get_config('local_warpwire'));
+
 if ($hassiteconfig) {
-    $settings = new admin_settingpage(
-            'local_warpwire',
-            get_string('pluginname', 'local_warpwire')
-        );
+    $settings = new admin_settingpage('local_warpwire', get_string('pluginname', 'local_warpwire'));
     $ADMIN->add('localplugins', $settings);
 
     //heading
-    $setting = new admin_setting_heading(
-            'local_warpwire/heading',
-            '', get_string('setting_heading_desc', 'local_warpwire')
-        );
+    $setting = new admin_setting_heading('local_warpwire/heading', '', get_string('setting_heading_desc', 'local_warpwire'));
     $settings->add($setting);
 
-    //site lti launch url
-    $setting = new admin_setting_configtext(
-            'local_warpwire/warpwire_lti',
-            get_string('setting_lti_label', 'local_warpwire'),
-            get_string('setting_lti_desc', 'local_warpwire'),
-            'https://example.warpwire.com/api/lti/', PARAM_TEXT
-        );
-    $setting->plugin = 'local_warpwire';
-    $settings->add($setting);
+    $settings->add(new \local_warpwire\admin_setting_warpwiretrial());
 
-    //site lti launch url
-    $setting = new admin_setting_configtext(
-            'local_warpwire/warpwire_key',
-            get_string('setting_key_label', 'local_warpwire'),
-            get_string('setting_key_desc', 'local_warpwire'),
-            'warpwire_key', PARAM_TEXT
-        );
-    $setting->plugin = 'local_warpwire';
-    $settings->add($setting);
-
-    //site lti launch url
-    $setting = new admin_setting_configtext(
-            'local_warpwire/warpwire_secret',
-            get_string('setting_secret_label', 'local_warpwire'),
-            get_string('setting_secret_desc', 'local_warpwire'),
-            'warpwire_secret', PARAM_TEXT
-        );
-    $setting->plugin = 'local_warpwire';
-    $settings->add($setting); 
+    $ADMIN->add('modules', new admin_externalpage('warpwire_trial_setup', 'Warpwire Trial Setup', new moodle_url('/local/warpwire/trial_setup.php'), 'moodle/site:config', true));
 }
