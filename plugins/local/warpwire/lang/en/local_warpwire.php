@@ -19,7 +19,14 @@ $string['pluginname'] = 'Warpwire Plugin Configuration';
 $string['modulename'] = 'Warpwire Plugin Configuration';
 $string['modulenameplural'] = 'Warpwire Plugin Configurations';
 
+$string['status_heading_label'] = 'Warpwire Status';
+$string['status_heading_desc'] = '';
+
+$string['setting_heading_label'] = 'Warpwire Settings';
 $string['setting_heading_desc'] = 'These settings customize the method in which your Moodle instance connects to Warpwire.<br/><br/>You may need to purge your Moodle caches after changing these settings for them to take effect.<br/><br/>';
+
+$string['setting_url_label'] = 'Your Warpwire site URL';
+$string['setting_url_desc'] = 'The base URL of your Warpwire site - for example, "https://example.warpwire.com/". Make sure you include the "https://", as well as the trailing slash.<br /><br />';
 
 $string['setting_lti_label'] = 'Your Warpwire LTI Launch URL';
 $string['setting_lti_desc'] = 'The LTI launch URL of your Warpwire site - for example, "https://example.warpwire.com/api/lti/".  Make sure you include the "https://", as well as the trailing slash.<br/><br/>';
@@ -29,3 +36,31 @@ $string['setting_key_desc'] = 'The provided consumer key for your Warpwire site.
 
 $string['setting_secret_label'] = 'Your Warpwire Consumer Secret';
 $string['setting_secret_desc'] = 'The provided consumer secret for your Warpwire site.<br/><br/>';
+
+$string['setting_admin_username_label'] = 'Your Warpwire administrative username';
+$string['setting_admin_username_desc'] = 'The provided administrative username for your Warpwiresite (not required).<br/><br/>';
+
+$string['setting_admin_password_label'] = 'Your Warpwire administrative password';
+$string['setting_admin_password_desc'] = 'The provided administrative password for your Warpwire site (not required).<br/><br/>';
+
+$string['setting_externalpage_trial'] = 'Warpwire Trial';
+
+$string['notice_already_configured'] = 'Trial has already been set up';
+
+$string['notice_reset_confirmation'] = 'Are you sure you want to reset settings? If you do, your connection to Warpwire will no longer work.';
+$string['notice_reset_complete'] = 'Configuration has been reset';
+$string['action_reset_confirm'] = 'Reset Settings';
+$string['action_reset_cancel'] = 'Go Back';
+
+$string['notice_invalid_action'] = 'Invalid action.';
+
+$string['notice_setup_error'] = 'Error: unable to initiate Warpwire trial. Please contact support.';
+
+$string['notice_setup_initiated'] = 'Trial setup initiated. You may close this window.';
+
+$string['notice_usage_limits'] = 'Warpwire limits the amount of content that may be added or viewed before purchasing more. If you wish to upgrade, please contact Moodle.us support.';
+$string['notice_error_usage'] = 'Unable to retrieve usage information.';
+$string['notice_getting_started'] = 'Your site is not configured to use Warpwire. If you have a Warpwire site already, you must enter the credentials in the settings area below. If you do not have a Warpwire site, you may start a trial by clicking "Start Trial". This will create a new Warpwire site and configure your Moodle site automatically.';
+
+$string['action_start_trial'] = 'Start Trial';
+$string['action_reset_settings'] = 'Reset Settings';

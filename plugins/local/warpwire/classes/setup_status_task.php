@@ -1,8 +1,22 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 namespace local_warpwire;
 
-class warpwire_status_task extends \core\task\adhoc_task {
+class setup_status_task extends \core\task\adhoc_task {
     public function execute() {
         $data = $this->get_custom_data();
         $statusUrl = $data->status_url;
@@ -14,7 +28,7 @@ class warpwire_status_task extends \core\task\adhoc_task {
             sleep(10);
         }
 
-        if (get_config('local_warpwire', 'is_configured') !== 'yes') {
+        if (!\local_warpwire\utilities::isConfigured()) {
             \local_warpwire\utilities::stdoutLogLong('Failed to configure after 600 seconds or due to error', 'WARPWIRE STATUS');
         }
     }
@@ -25,8 +39,8 @@ class warpwire_status_task extends \core\task\adhoc_task {
 
             \local_warpwire\utilities::stdoutLogLong($result, 'WARPWIRE STATUS');
 
-            set_config('warpwire_trial_status', $result['status'], 'local_warpwire');
-            set_config('warpwire_trial_status_message', $result['message'], 'local_warpwire');
+            set_config('setup_status', $result['status'], 'local_warpwire');
+            set_config('setup_status_message', $result['message'], 'local_warpwire');
 
             if ($result['done'] === false) {
                 // keep waiting
@@ -38,7 +52,7 @@ class warpwire_status_task extends \core\task\adhoc_task {
                 return true;
             }
 
-            $domain = $result['internal_domain'];
+            $internalDomain = $result['internal_domain'];
             $initialAdminCredentialsUrl = $result['initial_admin_credentials_url'];
             $initiaLtiKeyUrl = $result['initial_lti_key_credentials_url'];
 
@@ -62,20 +76,18 @@ class warpwire_status_task extends \core\task\adhoc_task {
                 ];
             }
 
-            set_config('warpwire_lti', 'https://' . $domain . '/api/lti/', 'local_warpwire');
+            set_config('warpwire_lti', 'https://' . $internalDomain . '/api/lti/', 'local_warpwire');
 
             set_config('warpwire_key', $initialLtiKey['key'], 'local_warpwire');
             set_config('warpwire_secret', $initialLtiKey['secret'], 'local_warpwire');
 
-            set_config('warpwire_url', 'https://' . $domain . '/', 'local_warpwire');
+            set_config('warpwire_url', 'https://' . $internalDomain . '/', 'local_warpwire');
 
             set_config('warpwire_admin_username', $initialAdminCredentials['unique_id'], 'local_warpwire');
             set_config('warpwire_admin_password', $initialAdminCredentials['password'], 'local_warpwire');
 
-            set_config('is_configured', 'yes', 'local_warpwire');
-
             return true;
-        } catch (\Exception $ex) {
+        } catch (\Throwable $ex) {
             \local_warpwire\utilities::stdoutLogLong((string)$ex, 'WARPWIRE STATUS');
             return false;
         }
