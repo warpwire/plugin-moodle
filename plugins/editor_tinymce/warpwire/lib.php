@@ -23,7 +23,7 @@ class tinymce_warpwire extends editor_tinymce_plugin
 
     protected function update_init_params(array &$params, context $context,
         array $options = null) {
-        global $CFG, $COURSE;        
+        global $CFG, $COURSE;
 
         $filters = filter_get_active_in_context($context);
         $enabled  = array_key_exists('warpwire', $filters) || array_key_exists('filter/warpwire', $filters);
@@ -36,7 +36,12 @@ class tinymce_warpwire extends editor_tinymce_plugin
         // build the query params to pass
         $url_params_query = http_build_query(array('mode' => 'plugin'), '', '&');
 
-        $url_parts = parse_url(get_config('local_warpwire', 'warpwire_lti') . '?' . $url_params_query);
+        $warpwireUrl = get_config('local_warpwire', 'warpwire_lti');
+        if (empty($warpwireUrl)) {
+            return;
+        }
+
+        $url_parts = parse_url($warpwireUrl . '?' . $url_params_query);
 
         $parameters = array();
         if(!empty($url_parts['query']))

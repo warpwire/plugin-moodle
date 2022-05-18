@@ -36,10 +36,15 @@ defined('MOODLE_INTERNAL') || die('Invalid access');
 function atto_warpwire_params_for_js() {
 	global $CFG, $COURSE;
 
+    $ltiUrl = get_config('local_warpwire', 'warpwire_lti');
+    if (empty($ltiUrl)) {
+        return array('warpwire_url' => $CFG->wwwroot . '/local/warpwire/html/setup.html');
+    }
+
 	// build the query params to pass
 	$url_params_query = http_build_query(array('mode' => 'plugin'), '', '&');
 
-	$url_parts = parse_url(get_config('local_warpwire', 'warpwire_lti') . '?' . $url_params_query);
+	$url_parts = parse_url($ltiUrl . '?' . $url_params_query);
 
 	$parameters = array();
 	if(!empty($url_parts['query']))
