@@ -65,8 +65,8 @@ function setupTrial() {
 
     try {
         $webhookUrl = 'https://moodle.testing-public.warpwire.net/webhook/client-moodleus/';
-        $webhookAuthKey = 't9dCEzw5QaIkvGy1';
-        $webhookAuthSecret = 'dDX8o6r3xghaUthG3WNNSTM90NKGuj9YLjeSeyc6t6AcBKIQWvQVLV39xspqFnSo';
+        $webhookAuthKey = '0JJ22sHF0e0PI2ZL';
+        $webhookAuthSecret = 'EjGBpMKqGWtanBqujSXpQlZosEZgNb1bgk5mftjkGdr4yMurHph5p8mEMLTsFL8P';
 
         $domain = parse_url($CFG->wwwroot, PHP_URL_HOST);
 
@@ -79,8 +79,6 @@ function setupTrial() {
             'login_domain' => $domain,
             'short_name' => $shortName,
             'long_name' => $longName,
-            // TODO: change to use a Moodle-specific verification
-            'verification_key' => 'VERIFICATION_TEST',
             'dry_run' => false
         ];
 
@@ -93,11 +91,11 @@ function setupTrial() {
         set_config('setup_status', 'error', 'local_warpwire');
 
         if (strstr($ex->getMessage(), 'Client already exists')) {
-            set_config('setup_status_message', 'Warpwire site already exists. Please contact support to get setup information.', 'local_warpwire');
-            messageAndExit(get_string('notice_setup_error_client_exists', 'local_warpwire'));
+            set_config('setup_status_message', get_string('notice_setup_error_client_exists', 'local_warpwire'), 'local_warpwire');
+            redirectAndExit(get_string('notice_setup_error_client_exists', 'local_warpwire'));
         } else {
-            set_config('setup_status_message', 'Setup request failed.', 'local_warpwire');
-            messageAndExit(get_string('notice_setup_error', 'local_warpwire'));
+            set_config('setup_status_message', get_string('notice_setup_error', 'local_warpwire'), 'local_warpwire');
+            redirectAndExit(get_string('notice_setup_error', 'local_warpwire'));
         }
     }
 
@@ -109,35 +107,25 @@ function setupTrial() {
         $result = \core\task\manager::queue_adhoc_task($task);
 
         set_config('setup_status', 'queued', 'local_warpwire');
-        set_config('setup_status_message', 'Setup request has been sent', 'local_warpwire');
+        set_config('setup_status_message', get_string('notice_setup_success', 'local_warpwire'), 'local_warpwire');
 
         \local_warpwire\utilities::errorLogLong('Task queued with ID: ' . $result, 'WARPWIRE TRIAL SETUP');
     } catch(\Exception $ex) {
         \local_warpwire\utilities::errorLogLong((string)$ex, 'WARPWIRE TRIAL SETUP');
 
         set_config('setup_status', 'error', 'local_warpwire');
-        set_config('setup_status_message', 'Setup request failed.', 'local_warpwire');
+        set_config('setup_status_message', get_string('notice_setup_error_noretry', 'local_warpwire'), 'local_warpwire');
 
-        messageAndExit(get_string('notice_setup_error', 'local_warpwire'));
+        redirectAndExit(get_string('notice_setup_error_noretry', 'local_warpwire'));
     }
 
-    redirectAndExit(get_string('notice_setup_initiated', 'local_warpwire'));
+    redirectAndExit(get_string('notice_setup_success', 'local_warpwire'));
 }
 
 function redirectAndExit($message) {
     global $OUTPUT, $returnurl;
 
     redirect($returnurl);
-
-    echo $OUTPUT->header();
-    echo \html_writer::tag('p', $message);
-    echo $OUTPUT->footer();
-
-    exit;
-}
-
-function messageAndExit($message) {
-    global $OUTPUT;
 
     echo $OUTPUT->header();
     echo \html_writer::tag('p', $message);

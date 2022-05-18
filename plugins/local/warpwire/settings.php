@@ -25,11 +25,13 @@ if ($hassiteconfig) {
     $ADMIN->add('localplugins', new admin_externalpage('warpwire_trial', get_string('setting_externalpage_trial', 'local_warpwire'), new moodle_url('/local/warpwire/setup.php', ['action' => 'setup']), 'moodle/site:config', true));
 
     $setting = new admin_setting_heading('local_warpwire/status_heading', get_string('status_heading_label', 'local_warpwire'), get_string('status_heading_desc', 'local_warpwire'));
+    $setting->plugin = 'local_warpwire';
     $settings->add($setting);
 
     $settings->add(new \local_warpwire\admin_setting_warpwirestatus());
 
     $setting = new admin_setting_heading('local_warpwire/heading', get_string('setting_heading_label', 'local_warpwire'), get_string('setting_heading_desc', 'local_warpwire'));
+    $setting->plugin = 'local_warpwire';
     $settings->add($setting);
 
     $setting = new admin_setting_configtext('local_warpwire/warpwire_url', get_string('setting_url_label', 'local_warpwire'), get_string('setting_url_desc', 'local_warpwire'), 'https://example.warpwire.com/', PARAM_TEXT);

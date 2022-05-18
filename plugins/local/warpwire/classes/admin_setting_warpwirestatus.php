@@ -19,6 +19,7 @@ namespace local_warpwire;
 class admin_setting_warpwirestatus extends \admin_setting {
     public function __construct() {
         $this->nosave = true;
+        $this->plugin = 'local_warpwire';
         parent::__construct('setup_setup', 'Warpwire Status', '', '');
     }
 
@@ -40,30 +41,34 @@ class admin_setting_warpwirestatus extends \admin_setting {
     }
 
     public function output_html($data, $query='') {
+        global $OUTPUT;
+
         $html = '';
 
         $isConfigured = \local_warpwire\utilities::isConfigured();
 
         if ($isConfigured) {
-            $html .= \html_writer::tag('p', get_string('notice_usage_limits', 'local_warpwire'));
-
-            $header = ['', 'Current Usage', 'Limit'];
-            $data = [];
-
             $baseUrl = get_config('local_warpwire', 'warpwire_url');
 
             try {
+                $bootstrap = \local_warpwire\utilities::makeAuthenticatedGetRequest("{$baseUrl}api/bootstrap/");
                 $usage = \local_warpwire\utilities::makeAuthenticatedGetRequest("{$baseUrl}api/usage/summary/current/");
+
+                if ($bootstrap['client']['isTrial'] ?? false) {
+                    $html .= \html_writer::tag('p', get_string('notice_usage_limits_trial', 'local_warpwire'));
+                } else {
+                    $html .= \html_writer::tag('p', get_string('notice_usage_limits', 'local_warpwire'));
+                }
 
                 $usageInfo = [];
 
                 foreach ($usage['summary'] as $key => $value) {
-                    if (preg_match('/^(actual|allowed)_(.*)$/', $key, $matches)) {
+                    if (preg_match('/^(actual|allowed)_(.*)_(tb|dollars|minutes|hours|count)$/', $key, $matches)) {
                         list (, $type, $metric) = $matches;
                         if ($value === null) {
                             $valueString = 'No Limit';
                         }
-                        else if (in_array($metric, ['storage_tb', 'total_bandwidth_tb', 'public_bandwidth_tb', 'internal_bandwidth_tb'])) {
+                        else if (in_array($metric, ['storage', 'total_bandwidth', 'public_bandwidth', 'internal_bandwidth'])) {
                             $value *= pow(10, 12);
                             if ($value <= 0) {
                                 $valueString = '0 Bytes';
@@ -72,35 +77,52 @@ class admin_setting_warpwirestatus extends \admin_setting {
                                 $order = floor(log($value) / log(1000));
                                 $valueString = sprintf('%0.1d %s', $value / pow(1000, $order), $sizes[$order]);
                             }
-                        } elseif ($metric === 'duration_hours') {
+                        } elseif ($metric === 'duration') {
                             $valueString = sprintf('%0.1f hours', round($value, 1));
-                        } elseif ($metric === 'caption_duration_minutes') {
+                        } elseif ($metric === 'caption_duration') {
                             $valueString = sprintf('%0.1f hours', $value);
-                        } elseif ($metric === 'caption_cost_dollars') {
+                        } elseif ($metric === 'caption_cost') {
                             $valueString = sprintf('$%0.2f', round($value, 2));
                         } else {
                             $valueString = sprintf('%d', $value);
                         }
                         $usageInfo[$metric][$type] = ['value' => $value, 'string' => $valueString];
+                    } elseif (\preg_match('/^(.*)_used_percent$/', $key, $matches)) {
+                        list (, $metric) = $matches;
+                        if ($value === null) {
+                            $valueString = 'N/A';
+                            $statusHtml = \html_writer::img($OUTPUT->image_url('t/unlock'), 'Not Allowed', ['style' => 'margin-right: 5px; width: 1em; height: 1em']) . \html_writer::span('Not Allowed');
+                        } else {
+                            $valueString = sprintf('%d%%', $value);
+                            if ($value < 100) {
+                                $statusHtml = \html_writer::img($OUTPUT->image_url('i/checkedcircle'), 'OK', ['style' => 'margin-right: 5px; width: 1em; height: 1em']) . \html_writer::span('OK');
+                            } else {
+                                $statusHtml = \html_writer::img($OUTPUT->image_url('i/warning'), 'Limit Reached', ['style' => 'margin-right: 5px; width: 1em; height: 1em']) . \html_writer::span('Limit Reached');
+                            }
+                        }
+                        $usageInfo[$metric]['percent'] = ['value' => $value, 'string' => $valueString, 'statusHtml' => $statusHtml];
                     }
                 }
 
                 ksort($usageInfo);
 
                 $metricNames = [
-                    'storage_tb' => 'Storage',
-                    'total_bandwidth_tb' => 'Total Bandwidth',
-                    'public_bandwidth_tb' => 'Public Bandwidth',
-                    'internal_bandwidth_tb' => 'Non-Public Bandwidth',
-                    'duration_hours' => 'Video Duration',
-                    'video_count' => 'Number of Videos',
-                    'caption_cost_dollars' => 'Human Captions',
-                    'caption_duration_minutes' => 'Machine Captions'
+                    'storage' => 'Storage',
+                    'total_bandwidth' => 'Total Bandwidth',
+                    'public_bandwidth' => 'Public Bandwidth',
+                    'internal_bandwidth' => 'Non-Public Bandwidth',
+                    'duration' => 'Video Duration',
+                    'video' => 'Number of Videos',
+                    'caption_cost' => 'Human Captions',
+                    'caption_duration' => 'Machine Captions'
                 ];
 
+                $header = ['', 'Current Usage', 'Limit', '% Used', ''];
+                $data = [];
+
                 foreach ($usageInfo as $metric => $metricInfo) {
-                    if (is_numeric($metricInfo['allowed']['value']) && $metricInfo['allowed']['value'] >= 0) {
-                        $data[] = [ $metricNames[$metric] ?? $metric, $metricInfo['actual']['string'], $metricInfo['allowed']['string'] ];
+                    if (isset($metricInfo['allowed']['value']) && is_numeric($metricInfo['allowed']['value']) && $metricInfo['allowed']['value'] > 0) {
+                        $data[] = [ $metricNames[$metric] ?? $metric, $metricInfo['actual']['string'], $metricInfo['allowed']['string'], $metricInfo['percent']['string'] ?? '', $metricInfo['percent']['statusHtml'] ?? '' ];
                     }
                 }
 
@@ -112,10 +134,19 @@ class admin_setting_warpwirestatus extends \admin_setting {
                 \local_warpwire\utilities::errorLogLong((string)$ex, 'WARPWIRE');
                 $html .= \html_writer::tag('p', get_string('notice_error_usage', 'local_warpwire'));
             }
-        } elseif (!empty(get_config('local_warpwire', 'setup_status'))) {
+        } elseif (!empty($status = get_config('local_warpwire', 'setup_status'))) {
             $html .= \html_writer::script('', new \moodle_url('/local/warpwire/checkstatus.js'));
-            $html .= \html_writer::tag('p', 'Checking status...', ['id' => 'warpwire_status_container']);
-            $html .= $this->createStartTrialButton('warpwire_trial_button');
+            $html .= \html_writer::tag('p', 'Creating a new site may take several minutes. You may leave and return to this page at any time.');
+            if (!in_array(strtolower($status), ['queued', 'notstarted', 'processing', 'unknown'])) {
+                $html .= \html_writer::tag('p', ucfirst(strtolower($status)) . ': ' . get_config('local_warpwire', 'setup_status_message'));
+                $html .= $this->createStartTrialButton();
+            } else {
+                $html .= \html_writer::start_tag('p');
+                $html .= \html_writer::img($OUTPUT->image_url('y/loading'), 'OK', ['style' => 'margin-right: 5px; width: 1em; height: 1em']);
+                $html .= \html_writer::tag('span', 'Checking status...', ['id' => 'warpwire_status_container']);
+                $html .= \html_writer::end_tag('p');
+                $html .= $this->createStartTrialButton(['id' => 'warpwire_trial_button', 'style' => 'display: none']);
+            }
         } else {
             $html .= \html_writer::tag('p', get_string('notice_getting_started', 'local_warpwire'));
             $html .= $this->createStartTrialButton();
@@ -124,13 +155,7 @@ class admin_setting_warpwirestatus extends \admin_setting {
         return highlight($query, $html);
     }
 
-    private function createStartTrialButton($id = '') {
-        if ($id != '') {
-            $attrs = ['id' => $id];
-        } else {
-            $attrs = [];
-        }
-
+    private function createStartTrialButton($attrs = []) {
         return \html_writer::start_div('box generalbox py-3', $attrs)
              . \html_writer::link(new \moodle_url('/local/warpwire/setup.php', ['action' => 'setup', 'sesskey' => sesskey()]), get_string('action_start_trial', 'local_warpwire'), ['class' => 'btn btn-primary'])
              . \html_writer::end_div();
