@@ -60,29 +60,34 @@ $PAGE->set_heading(format_string($course->fullname));
 echo $OUTPUT->header();
 
 $url = get_config('local_warpwire', 'warpwire_lti');
+if (! empty($url)) {
+    $url_parts = parse_url($url);
 
-$url_parts = parse_url($url);
+    $parameters = array();
+    if(!empty($url_parts['query'])) {
+        parse_str($url_parts['query'], $parameters);
+    }
+    
+    $url_parts['query'] = http_build_query($parameters, '', '&');
+    
+    $url = $url_parts['scheme'].'://'.$url_parts['host'].$url_parts['path'].'?'.$url_parts['query'];
+    
+    $parts = array(
+        'url' => $url,
+        'course_id' => $course->id
+    );
+    
+    $partsString = http_build_query($parts, '', '&');
+    
+    $pageUrl = $CFG->wwwroot . '/local/warpwire/?' .$partsString;
+} else {
+    $pageUrl = $CFG->wwwroot . '/local/warpwire/html/setup.html';
+}
 
-$parameters = array();
-if(!empty($url_parts['query']))
-    parse_str($url_parts['query'], $parameters);
-
-$url_parts['query'] = http_build_query($parameters, '', '&');
-
-$url = $url_parts['scheme'].'://'.$url_parts['host'].$url_parts['path'].'?'.$url_parts['query'];
-
-$parts = array(
-    'url' => $url,
-    'course_id' => $course->id
-);
-
-$partsString = http_build_query($parts, '', '&');
-
-$url = $CFG->wwwroot . '/local/warpwire/?' .$partsString;
 
 $content = '<iframe 
 		id="contentframe" height="600" width="100%" 
-		src="'.$url.'"
+		src="'.$pageUrl.'"
 		frameborder="0" scrolling="0" 
 		allow="autoplay *; encrypted-media *; fullscreen *; camera *; microphone *;" 
 		title="Warpwire Media Library" allowfullscreen></iframe>';

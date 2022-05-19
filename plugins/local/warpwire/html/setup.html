@@ -47,7 +47,17 @@
                 <li>Save your changes</li>
             </ul>
             <p>Once the Warpwire configuratation is complete, this page will load your Warpwire Media Library.</p>
-            <input type="button" value="Close" onclick="window.close()" />
+            <script>
+                if (window == window.top) {
+                    var closeButton = document.createElement('button');
+                    closeButton.value = 'Close';
+                    closeButton.innerText = 'Close';
+                    closeButton.onclick = function() {
+                        window.close();
+                    }
+                    document.body.append(closeButton);
+                }
+            </script>
         </div>
     </body>
 </html>
