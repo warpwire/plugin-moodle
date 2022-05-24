@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Warpwire Setup</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+        <style>
+            .hidden {
+                display: none;
+            }
+
+            body {
+                margin: 0;
+                font-family: Helvetica, sans-serif;
+                font-weight: 300;
+                font-size: 14px;
+            }
+
+            .header {
+                padding: 15px;
+                background: #0073ba;
+            }
+
+            .header img {
+                height: 24px;
+                width: auto;
+            }
+
+            .content {
+                margin: 30px 15px;
+            }
+
+            .bold {
+                font-weight: 500;
+            }
+
+        </style>
+    </head>
+    <body>
+        <div class="header"></div>
+        <div class="content">
+            <p class="bold">Warpwire needs to be installed.</p>
+            <p>Please ask your Moodle administrator to perform the following steps:</p>
+            <ul>
+                <li>Go to Site administration > Plugins > Warpwire Plugin Configuration</li>
+                <li>Option 1: Press the "Start Trial" button to automatically configure Warpwire</li>
+                <li>Option 2: Manually enter in the Warpwire credentials information</li>
+                <li>Save your changes</li>
+            </ul>
+            <p>Once the Warpwire configuratation is complete, this page will load your Warpwire Media Library.</p>
+            <script>
+                if (window == window.top) {
+                    var closeButton = document.createElement('button');
+                    closeButton.value = 'Close';
+                    closeButton.innerText = 'Close';
+                    closeButton.onclick = function() {
+                        window.close();
+                    }
+                    document.body.append(closeButton);
+                }
+            </script>
+        </div>
+    </body>
+</html>

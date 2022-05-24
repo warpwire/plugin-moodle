@@ -14,23 +14,28 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Defines the version and other meta-info about the Warpwire Activity Module
- *
- * @package    mod_warpwire
- * @copyright  2016 Warpwire <https://warpwire.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace local_warpwire;
 
-defined('MOODLE_INTERNAL') || die();
+$services = [
+    'warpwiresetupservice' => [
+        'functions' => ['local_warpwire_check_setup_status'],
+        'requiredcapability' => '',
+        'restrictedusers' => 0,
+        'enabled' => 1,
+        'shortname' => '',
+        'downloadfils' => '',
+        'uploadfiles' => ''
+    ]
+];
 
-$plugin->component = 'mod_warpwire';
-$plugin->version   = 2022051800;
-$plugin->release   = '4.1.0-beta';
-$plugin->maturity  = MATURITY_STABLE;
-$plugin->requires  = 2019111800;
-$plugin->cron      = 0;
-
-$plugin->dependencies = array(
-    'local_warpwire' => 2022051800
-);
+$functions = [
+    'local_warpwire_check_setup_status' => [
+        'classname' => 'local_warpwire\check_setup_status',
+        'methodname' => 'get_status',
+        'description' => 'Checks Warpwire setup status',
+        'type' => 'read',
+        'ajax' => true,
+        'services' => [],
+        'capabilities' => ''
+    ]
+];
