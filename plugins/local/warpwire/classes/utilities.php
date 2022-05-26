@@ -157,6 +157,12 @@ class utilities {
                !empty(get_config('local_warpwire', 'warpwire_admin_password'));
     }
 
+    public static function setConfigLog($name, $value) {
+        $oldValue = get_config('local_warpwire', $name);
+        set_config($name, $value, 'local_warpwire');
+        add_to_config_log($name, $oldValue, $value, 'local_warpwire');
+    }
+
     private static function authorize() {
         $baseUrl = get_config('local_warpwire', 'warpwire_url');
         $adminUsername = get_config('local_warpwire', 'warpwire_admin_username');

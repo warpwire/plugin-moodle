@@ -39,23 +39,17 @@ class mod_warpwire_mod_form extends moodleform_mod {
      * Defines forms elements
      */
     public function definition() {
-        global $CFG;
-
         $mform = $this->_form;
 
         // Adding the "general" fieldset, where all the common settings are showed.
         $mform->addElement('header', 'general', get_string('general', 'form'));
 
         // Adding the standard "name" field.
-        $mform->addElement('static', 'module_title', 'Name', get_string('warpwirename', 'warpwire'));
-        $mform->addElement('hidden', 'name', 'Warpwire');
+        $mform->addElement('text', 'name', get_string('name'), array('size' => '48'));
+        $mform->setType('name', PARAM_TEXT);
 
         // Adding the standard "intro" and "introformat" fields.
-        if ($CFG->branch >= 29) {
-            $this->standard_intro_elements();
-        } else {
-            $this->add_intro_editor();
-        }
+        $this->standard_intro_elements();
 
         // Add standard elements, common to all modules.
         $this->standard_coursemodule_elements();

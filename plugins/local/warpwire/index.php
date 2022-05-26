@@ -34,7 +34,13 @@ function warpwire_external_content($user, $course, $sectionId, $moduleId)
 {
     global $CFG;
 
-    $lti_url_parts = parse_url(get_config('local_warpwire', 'warpwire_lti'));
+    $warpwireLtiUrl = get_config('local_warpwire', 'warpwire_lti');
+    if (empty($warpwireLtiUrl)) {
+        echo \html_writer::tag('p', get_string('content_not_configured', 'local_warpwire'));
+        return;
+    }
+
+    $lti_url_parts = parse_url($warpwireLtiUrl);
     $url_parts = parse_url($_GET['url']);
 
     $host_match = false;
@@ -116,7 +122,7 @@ function warpwire_external_content($user, $course, $sectionId, $moduleId)
   ) {
         $params['returnContext'] = $_GET['url'];
     }
-  
+
     // build the OAuth signature
     $sig = build_signature('POST', get_config('local_warpwire', 'warpwire_lti'), $params, get_config('local_warpwire', 'warpwire_secret'));
 

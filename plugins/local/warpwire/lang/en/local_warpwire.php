@@ -19,6 +19,8 @@ $string['pluginname'] = 'Warpwire Plugin Configuration';
 $string['modulename'] = 'Warpwire Plugin Configuration';
 $string['modulenameplural'] = 'Warpwire Plugin Configurations';
 
+$string['content_not_configured'] = 'Content cannot be displayed because the Warpwire plugin is not configured.';
+
 $string['status_heading_label'] = 'Warpwire Status';
 $string['status_heading_desc'] = '';
 

@@ -34,27 +34,27 @@ if ($hassiteconfig) {
     $setting->plugin = 'local_warpwire';
     $settings->add($setting);
 
-    $setting = new admin_setting_configtext('local_warpwire/warpwire_url', get_string('setting_url_label', 'local_warpwire'), get_string('setting_url_desc', 'local_warpwire'), 'https://example.warpwire.com/', PARAM_TEXT);
+    $setting = new admin_setting_configtext('local_warpwire/warpwire_url', get_string('setting_url_label', 'local_warpwire'), get_string('setting_url_desc', 'local_warpwire'), '', PARAM_TEXT);
     $setting->plugin = 'local_warpwire';
     $settings->add($setting);
 
-    $setting = new admin_setting_configtext('local_warpwire/warpwire_lti', get_string('setting_lti_label', 'local_warpwire'), get_string('setting_lti_desc', 'local_warpwire'), 'https://example.warpwire.com/api/lti/', PARAM_TEXT);
+    $setting = new admin_setting_configtext('local_warpwire/warpwire_lti', get_string('setting_lti_label', 'local_warpwire'), get_string('setting_lti_desc', 'local_warpwire'), '', PARAM_TEXT);
     $setting->plugin = 'local_warpwire';
     $settings->add($setting);
 
-    $setting = new admin_setting_configtext('local_warpwire/warpwire_key', get_string('setting_key_label', 'local_warpwire'), get_string('setting_key_desc', 'local_warpwire'), 'warpwire_key', PARAM_TEXT);
+    $setting = new admin_setting_configtext('local_warpwire/warpwire_key', get_string('setting_key_label', 'local_warpwire'), get_string('setting_key_desc', 'local_warpwire'), '', PARAM_TEXT);
     $setting->plugin = 'local_warpwire';
     $settings->add($setting);
 
-    $setting = new admin_setting_configpasswordunmask('local_warpwire/warpwire_secret', get_string('setting_secret_label', 'local_warpwire'), get_string('setting_secret_desc', 'local_warpwire'), 'warpwire_secret', PARAM_TEXT);
+    $setting = new admin_setting_configpasswordunmask('local_warpwire/warpwire_secret', get_string('setting_secret_label', 'local_warpwire'), get_string('setting_secret_desc', 'local_warpwire'), '', PARAM_TEXT);
     $setting->plugin = 'local_warpwire';
     $settings->add($setting);
 
-    $setting = new admin_setting_configtext('local_warpwire/warpwire_admin_username', get_string('setting_admin_username_label', 'local_warpwire'), get_string('setting_admin_username_desc', 'local_warpwire'), 'user@example.com', PARAM_TEXT);
+    $setting = new admin_setting_configtext('local_warpwire/warpwire_admin_username', get_string('setting_admin_username_label', 'local_warpwire'), get_string('setting_admin_username_desc', 'local_warpwire'), '', PARAM_TEXT);
     $setting->plugin = 'local_warpwire';
     $settings->add($setting);
 
-    $setting = new admin_setting_configpasswordunmask('local_warpwire/warpwire_admin_password', get_string('setting_admin_password_label', 'local_warpwire'), get_string('setting_admin_password_desc', 'local_warpwire'), 'password', PARAM_TEXT);
+    $setting = new admin_setting_configpasswordunmask('local_warpwire/warpwire_admin_password', get_string('setting_admin_password_label', 'local_warpwire'), get_string('setting_admin_password_desc', 'local_warpwire'), '', PARAM_TEXT);
     $setting->plugin = 'local_warpwire';
     $settings->add($setting);
 }

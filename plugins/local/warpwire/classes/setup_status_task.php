@@ -29,7 +29,11 @@ class setup_status_task extends \core\task\adhoc_task {
         }
 
         if (!\local_warpwire\utilities::isConfigured()) {
-            \local_warpwire\utilities::stdoutLogLong('Failed to configure after 600 seconds or due to error', 'WARPWIRE STATUS');
+            if (time() - $startTime < 600) {
+                \local_warpwire\utilities::stdoutLogLong('Failed to configure due to error', 'WARPWIRE STATUS');
+            } else {
+                \local_warpwire\utilities::stdoutLogLong('Failed to configure after 600 seconds', 'WARPWIRE STATUS');
+            }
         }
     }
 
@@ -76,15 +80,13 @@ class setup_status_task extends \core\task\adhoc_task {
                 ];
             }
 
-            set_config('warpwire_lti', 'https://' . $internalDomain . '/api/lti/', 'local_warpwire');
+            \local_warpwire\utilities::setConfigLog('warpwire_lti',  'https://' . $internalDomain . '/api/lti/');
+            \local_warpwire\utilities::setConfigLog('warpwire_key',  $initialLtiKey['key']);
+            \local_warpwire\utilities::setConfigLog('warpwire_secret',  $initialLtiKey['secret']);
 
-            set_config('warpwire_key', $initialLtiKey['key'], 'local_warpwire');
-            set_config('warpwire_secret', $initialLtiKey['secret'], 'local_warpwire');
-
-            set_config('warpwire_url', 'https://' . $internalDomain . '/', 'local_warpwire');
-
-            set_config('warpwire_admin_username', $initialAdminCredentials['unique_id'], 'local_warpwire');
-            set_config('warpwire_admin_password', $initialAdminCredentials['password'], 'local_warpwire');
+            \local_warpwire\utilities::setConfigLog('warpwire_url',  'https://' . $internalDomain . '/');
+            \local_warpwire\utilities::setConfigLog('warpwire_admin_username',  $initialAdminCredentials['unique_id']);
+            \local_warpwire\utilities::setConfigLog('warpwire_admin_password',  $initialAdminCredentials['password']);
 
             set_config('setup_status', null, 'local_warpwire');
             set_config('setup_status_message', null, 'local_warpwire');

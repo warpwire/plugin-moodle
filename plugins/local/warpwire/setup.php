@@ -19,8 +19,6 @@ require_once($CFG->libdir . '/adminlib.php');
 
 admin_externalpage_setup('warpwire_trial');
 
-$pageurl = new moodle_url('/local/warpwire/setup.php');
-
 $returnurl = new moodle_url('/admin/settings.php', ['section' => 'local_warpwire']);
 
 if (!confirm_sesskey()) {
@@ -39,7 +37,6 @@ switch($action) {
         resetConfiguration();
         setupTrial();
         break;
-    // TODO: add status check for AJAX?
     default:
         redirectAndExit(get_string('notice_invalid_action', 'local_warpwire'));
         break;
@@ -49,15 +46,13 @@ function resetConfiguration() {
     // reset all configuration to make sure we have a clean slate
     set_config('setup_status', null, 'local_warpwire');
     set_config('setup_status_message', null, 'local_warpwire');
-    set_config('warpwire_lti', null, 'local_warpwire');
-    set_config('warpwire_key', null, 'local_warpwire');
-    set_config('warpwire_secret', null, 'local_warpwire');
-    set_config('warpwire_url', null, 'local_warpwire');
-    set_config('warpwire_admin_username', null, 'local_warpwire');
-    set_config('warpwire_admin_password', null, 'local_warpwire');
-    set_config('warpwire_auth_token', null, 'local_warpwire');
-    set_config('warpwire_trial_status', null, 'local_warpwire');
-    set_config('warpwire_trial_status_message', null, 'local_warpwire');
+    \local_warpwire\utilities::setConfigLog('warpwire_lti', null);
+    \local_warpwire\utilities::setConfigLog('warpwire_key', null);
+    \local_warpwire\utilities::setConfigLog('warpwire_secret', null);
+    \local_warpwire\utilities::setConfigLog('warpwire_url', null);
+    \local_warpwire\utilities::setConfigLog('warpwire_admin_username', null);
+    \local_warpwire\utilities::setConfigLog('warpwire_admin_password', null);
+    set_config('warpwire_auth_token', null);
 }
 
 function setupTrial() {
