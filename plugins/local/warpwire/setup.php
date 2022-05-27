@@ -59,9 +59,9 @@ function setupTrial() {
     global $CFG;
 
     try {
-        $webhookUrl = 'https://moodle.testing-public.warpwire.net/webhook/client-moodleus/';
-        $webhookAuthKey = '0JJ22sHF0e0PI2ZL';
-        $webhookAuthSecret = 'EjGBpMKqGWtanBqujSXpQlZosEZgNb1bgk5mftjkGdr4yMurHph5p8mEMLTsFL8P';
+        $webhookUrl = 'https://bootstrap.warpwire.com/webhook/client-moodleus/';
+        $webhookAuthKey = 'Na9Ito3zjZu2rwi8';
+        $webhookAuthSecret = 'ADpZvv19j5ga6RO4o37L4f2CCDA6QyU11YQxx3UdETpj3tbW5c5u56rEebfbahy4';
 
         $domain = parse_url($CFG->wwwroot, PHP_URL_HOST);
 
