@@ -129,11 +129,8 @@ class utilities {
             $result = self::makeGetRequest($url, $authToken, $useStdout);
         } catch(\Exception $ex) {
             if ($ex->getCode() === 401) {
-                $authToken = get_config('local_warpwire', 'warpwire_auth_token');
-                if (empty($authToken)) {
-                    $authToken = self::authorize(get_config('local_warpwire', 'warpwire_url'), get_config('local_warpwire', 'warpwire_admin_username'), get_config('local_warpwire', 'warpwire_admin_password'));
-                    set_config('warpwire_auth_token', $authToken, 'local_warpwire');
-                }
+                $authToken = self::authorize();
+                set_config('warpwire_auth_token', $authToken, 'local_warpwire');
 
                 $result = self::makeGetRequest($url, $authToken, $useStdout);
             } else {
