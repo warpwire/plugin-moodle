@@ -14,14 +14,9 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-defined('MOODLE_INTERNAL') || die('Invalid access');
-
-$plugin = new stdClass();
-
-$plugin->component = 'local_warpwire';
-$plugin->version   = 2022060909;
-$plugin->release   = '4.1.0-beta';
-$plugin->maturity  = MATURITY_STABLE;
-$plugin->requires  = 2019111800;
-
-$plugin->dependencies  = array();
+$observers = [
+    [
+        'eventname' => '\core\event\config_log_created',
+        'callback' => '\local_warpwire\event_handler::on_setting_changed'
+    ]
+];

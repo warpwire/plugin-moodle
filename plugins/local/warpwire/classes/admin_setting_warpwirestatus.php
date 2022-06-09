@@ -45,10 +45,14 @@ class admin_setting_warpwirestatus extends \admin_setting {
 
         $html = '';
 
-        $isConfigured = \local_warpwire\utilities::isConfigured();
+        $isConfigured = \local_warpwire\utilities::isFullConfigured();
 
         if ($isConfigured) {
             $baseUrl = get_config('local_warpwire', 'warpwire_url');
+
+            $clientIdentifier = explode('.', parse_url($baseUrl, PHP_URL_HOST))[0];
+
+            $html .= \html_writer::tag('p', get_string('notice_client_identifier', 'local_warpwire', $clientIdentifier));
 
             try {
                 $bootstrap = \local_warpwire\utilities::makeAuthenticatedGetRequest("{$baseUrl}api/bootstrap/");
