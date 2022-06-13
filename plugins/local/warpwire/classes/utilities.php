@@ -146,16 +146,20 @@ class utilities {
     }
 
     public static function isConfigured() {
-        return !empty(get_config('local_warpwire', 'warpwire_lti')) &&
-               !empty(get_config('local_warpwire', 'warpwire_key')) &&
-               !empty(get_config('local_warpwire', 'warpwire_secret'));
+        $allConfig = (array)get_config('local_warpwire');
+        return !empty($allConfig['warpwire_lti']) &&
+               !empty($allConfig['warpwire_key']) &&
+               !empty($allConfig['warpwire_secret']);
     }
 
     public static function isFullConfigured() {
-        return self::isConfigured() &&
-               !empty(get_config('local_warpwire', 'warpwire_url')) &&
-               !empty(get_config('local_warpwire', 'warpwire_admin_username')) &&
-               !empty(get_config('local_warpwire', 'warpwire_admin_password'));
+        $allConfig = (array)get_config('local_warpwire');
+        return !empty($allConfig['warpwire_lti']) &&
+               !empty($allConfig['warpwire_key']) &&
+               !empty($allConfig['warpwire_secret']) &&
+               !empty($allConfig['warpwire_url']) &&
+               !empty($allConfig['warpwire_admin_username']) &&
+               !empty($allConfig['warpwire_admin_password']);
     }
 
     public static function setConfigLog($name, $value) {

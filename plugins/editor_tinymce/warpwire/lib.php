@@ -29,7 +29,7 @@ class tinymce_warpwire extends editor_tinymce_plugin
         $enabled  = array_key_exists('warpwire', $filters) || array_key_exists('filter/warpwire', $filters);
 
         // If warpwire filter is disabled, do not add button.
-        if (!$enabled) {
+        if (!$enabled || !\local_warpwire\utilities::isConfigured()) {
             return;
         }
 
@@ -37,10 +37,6 @@ class tinymce_warpwire extends editor_tinymce_plugin
         $url_params_query = http_build_query(array('mode' => 'plugin'), '', '&');
 
         $warpwireUrl = get_config('local_warpwire', 'warpwire_lti');
-        if (empty($warpwireUrl)) {
-            return;
-        }
-
         $url_parts = parse_url($warpwireUrl . '?' . $url_params_query);
 
         $parameters = array();

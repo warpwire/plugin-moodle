@@ -24,8 +24,11 @@ $string['content_not_configured'] = 'Content cannot be displayed because the War
 $string['status_heading_label'] = 'Warpwire Status';
 $string['status_heading_desc'] = '';
 
-$string['setting_heading_label'] = 'Warpwire Settings';
+$string['setting_heading_label'] = 'Warpwire LTI Settings';
 $string['setting_heading_desc'] = 'These settings customize the method in which your Moodle instance connects to Warpwire.<br/><br/>You may need to purge your Moodle caches after changing these settings for them to take effect.<br/><br/>';
+
+$string['setting_heading2_label'] = 'Warpwire Site Settings';
+$string['setting_heading2_desc'] = 'These settings are needed to get usage and trial information from your Warpwire site. If you don\'t know these settings, it is not necessary to fill them in.<br/><br/>You may need to purge your Moodle caches after changing these settings for them to take effect.<br/><br/>';
 
 $string['setting_url_label'] = 'Your Warpwire site URL';
 $string['setting_url_desc'] = 'The base URL of your Warpwire site - for example, "https://example.warpwire.com/". Make sure you include the "https://", as well as the trailing slash.<br /><br />';

@@ -24,22 +24,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-/**
- * Add the warpwire plugin to the Atto toolbar config if the media plugin is enabled.
- *
- * @return bool
- */
-function xmldb_atto_warpwire_install() {
-    global $CFG;
-
-    $toolbar = get_config('editor_atto', 'toolbar');
-    $pos = stristr($toolbar, 'warpwire');
-
-    if (!$pos) {
-        // Add imagedragdrop after image plugin.
-        $toolbar = preg_replace('/(.+?=.+?)media($|\s|,)/m', '$1media, warpwire$2', $toolbar, 1);
-		set_config('toolbar', $toolbar, 'editor_atto');
-    }
-
-    return true;
+function xmldb_atto_warpwire_uninstall() {
+    \atto_warpwire\event_handler::removeToolbarButton();
 }

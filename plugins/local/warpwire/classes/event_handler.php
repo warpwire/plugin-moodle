@@ -23,14 +23,19 @@ class event_handler {
         }
 
         if (\local_warpwire\utilities::isConfigured()) {
-            \local_warpwire\utilities::errorLogLong('Warpwire plugin is configured. Setting up features.', 'WARPWIRE EVENT');
+            \local_warpwire\utilities::errorLogLong('Warpwire plugin is configured. Setting up features.', 'WARPWIRE LTI');
 
             \local_warpwire\utilities::setupLtiTool(false);
         } else {
-            \local_warpwire\utilities::errorLogLong('Warpwire plugin is not configured. Disabling features.', 'WARPWIRE EVENT');
+            \local_warpwire\utilities::errorLogLong('Warpwire plugin is not configured. Disabling features.', 'WARPWIRE LTI');
 
             // It's not possible to remove and later re-add the tool as it breaks any embedded content
             // \local_warpwire\utilities::removeLtiTool(false);
+        }
+
+        if (in_array($evt->other['name'], ['warpwire_url', 'warpwire_admin_username', 'warpwire_admin_password'])) {
+            \local_warpwire\utilities::errorLogLong('Warpwire site configuration has changed. Resetting auth token.', 'WARPWIRE LTI');
+            set_config('warpwire_auth_token', null, 'local_warpwire');
         }
     }
 }

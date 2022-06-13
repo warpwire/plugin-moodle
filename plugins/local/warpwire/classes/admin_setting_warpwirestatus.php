@@ -45,9 +45,7 @@ class admin_setting_warpwirestatus extends \admin_setting {
 
         $html = '';
 
-        $isConfigured = \local_warpwire\utilities::isFullConfigured();
-
-        if ($isConfigured) {
+        if (\local_warpwire\utilities::isFullConfigured()) {
             $baseUrl = get_config('local_warpwire', 'warpwire_url');
 
             $clientIdentifier = explode('.', parse_url($baseUrl, PHP_URL_HOST))[0];
@@ -138,6 +136,12 @@ class admin_setting_warpwirestatus extends \admin_setting {
                 \local_warpwire\utilities::errorLogLong((string)$ex, 'WARPWIRE');
                 $html .= \html_writer::tag('p', get_string('notice_error_usage', 'local_warpwire'));
             }
+        } else if (\local_warpwire\utilities::isConfigured()) {
+            $baseUrl = get_config('local_warpwire', 'warpwire_lti');
+
+            $clientIdentifier = explode('.', parse_url($baseUrl, PHP_URL_HOST))[0];
+
+            $html .= \html_writer::tag('p', get_string('notice_client_identifier', 'local_warpwire', $clientIdentifier));
         } elseif (!empty($status = get_config('local_warpwire', 'setup_status'))) {
             $html .= \html_writer::script('', new \moodle_url('/local/warpwire/checkstatus.js'));
             $html .= \html_writer::tag('p', 'Creating a new site may take several minutes. You may leave and return to this page at any time.');
