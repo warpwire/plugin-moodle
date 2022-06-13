@@ -168,16 +168,15 @@ class utilities {
         add_to_config_log($name, $oldValue, $value, 'local_warpwire');
     }
 
-    public static function setupLtiTool($useStdout = false) {
+    public static function setupLtiTool($enabled, $useStdout = false) {
         global $CFG;
 
         try {
-            $existingLtiId = null;
+            $existingLtiIds = [];
             $existingTypes = \lti_get_lti_types();
             foreach ($existingTypes as $existingType) {
                 if ($existingType->name === 'Warpwire Graded Activity') {
-                    $existingLtiId = $existingType->id;
-                    break;
+                    $existingLtiIds[] = $existingType->id;
                 }
             }
 
@@ -192,18 +191,18 @@ class utilities {
             $data = (object)[
                 'lti_typename' => 'Warpwire Graded Activity',
                 'lti_toolurl' => $toolUrl,
-                'lti_description' => '',
+                'lti_description' => get_string('lti_tool_description', 'local_warpwire'),
                 'lti_version' => \LTI_VERSION_1,
                 'lti_resourcekey' => get_config('local_warpwire', 'warpwire_key'),
                 'lti_password' => get_config('local_warpwire', 'warpwire_secret'),
                 'lti_clientid' => '',
                 'lti_keytype' => \LTI_JWK_KEYSET,
                 'lti_customparameters' => '',
-                'lti_coursevisible' => \LTI_COURSEVISIBLE_ACTIVITYCHOOSER,
+                'lti_coursevisible' => $enabled ? \LTI_COURSEVISIBLE_ACTIVITYCHOOSER : \LTI_COURSEVISIBLE_NO,
                 'typeid' => 1,
                 'lti_launchcontainer' => \LTI_LAUNCH_CONTAINER_EMBED_NO_BLOCKS,
                 'lti_contentitem' => '1',
-                'lti_toolurl_ContentItemSelectionRequest' => $toolUrl,
+                'lti_toolurl_ContentItemSelection' => $toolUrl,
                 'oldicon' => $icon,
                 'lti_icon' => $icon,
                 'ltiservice_gradesynchronization' => '2',
@@ -219,16 +218,19 @@ class utilities {
                 'course' => 1
             ];
 
-            $type = new \stdClass();
-            $type->state = \LTI_TOOL_STATE_CONFIGURED;
-
-            if (!empty($existingLtiId)) {
-                \local_warpwire\utilities::logLong('Updating existing Warpwire LTI type (id: ' . $existingLtiId . ')', 'WARPWIRE LTI', $useStdout);
-                $type->id = $existingLtiId;
-                \lti_load_type_if_cartridge($data);
-                \lti_update_type($type, $data);
+            if (!empty($existingLtiIds)) {
+                foreach ($existingLtiIds as $existingLtiId) {
+                    \local_warpwire\utilities::logLong('Updating existing Warpwire LTI type (id: ' . $existingLtiId . ')', 'WARPWIRE LTI', $useStdout);
+                    $type = new \stdClass();
+                    $type->state = \LTI_TOOL_STATE_CONFIGURED;
+                    $type->id = $existingLtiId;
+                    \lti_load_type_if_cartridge($data);
+                    \lti_update_type($type, $data);
+                }
             } else {
                 \local_warpwire\utilities::logLong('Creating new Warpwire LTI type', 'WARPWIRE LTI', $useStdout);
+                $type = new \stdClass();
+                $type->state = \LTI_TOOL_STATE_CONFIGURED;
                 \lti_load_type_if_cartridge($data);
                 \lti_add_type($type, $data);
             }

@@ -74,3 +74,5 @@ $string['action_start_trial'] = 'Start Trial';
 $string['action_reset_settings'] = 'Reset Settings';
 
 $string['setup_error_client_exists'] = '';
+
+$string['lti_tool_description'] = 'Warpwire will record a grade as the percentage of new video content that a viewer watches.';

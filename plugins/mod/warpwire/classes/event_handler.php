@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace local_warpwire;
+namespace mod_warpwire;
 
 class event_handler {
     public static function on_setting_changed(\core\event\config_log_created $evt) {
@@ -23,22 +23,23 @@ class event_handler {
         }
 
         if (\local_warpwire\utilities::isConfigured()) {
-            \local_warpwire\utilities::errorLogLong('Warpwire plugin is configured. Setting up features.', 'WARPWIRE LTI');
+            \local_warpwire\utilities::errorLogLong('Warpwire plugin is configured. Setting up features.', 'WARPWIRE MOD');
 
-            \local_warpwire\utilities::setupLtiTool(true, false);
+            self::setModuleVisibility(true);
         } else {
-            \local_warpwire\utilities::errorLogLong('Warpwire plugin is not configured. Disabling features.', 'WARPWIRE LTI');
+            \local_warpwire\utilities::errorLogLong('Warpwire plugin is not configured. Disabling features.', 'WARPWIRE MOD');
 
-            // "disable" the tool by changing its visibility
-            \local_warpwire\utilities::setupLtiTool(false, false);
-
-            // It's not possible to remove and later re-add the tool as it breaks any embedded content
-            // \local_warpwire\utilities::removeLtiTool(false);
+            self::setModuleVisibility(false);
         }
+    }
 
-        if (in_array($evt->other['name'], ['warpwire_url', 'warpwire_admin_username', 'warpwire_admin_password'])) {
-            \local_warpwire\utilities::errorLogLong('Warpwire site configuration has changed. Resetting auth token.', 'WARPWIRE LTI');
-            set_config('warpwire_auth_token', null, 'local_warpwire');
+    private static function setModuleVisibility($visible) {
+        global $DB;
+
+        try {
+            $DB->set_field('modules', 'visible', $visible ? '1' : '0', ['name'=>'warpwire']);
+        } catch(\Throwable $ex) {
+            \local_warpwire\utilities::errorLogLong('Failed to change visibility of warpwire module: ' . $ex, 'WARPWIRE MOD');
         }
     }
 }
