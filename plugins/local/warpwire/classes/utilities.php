@@ -16,6 +16,9 @@
 
 namespace local_warpwire;
 
+require_once($CFG->dirroot.'/mod/lti/lib.php');
+require_once($CFG->dirroot.'/mod/lti/locallib.php');
+
 class utilities {
     public static function errorLogLong($message, $prefix) {
         if (!is_string($message)) {
@@ -37,7 +40,16 @@ class utilities {
         foreach (explode("\n", $message) as $line) {
             foreach( str_split($line, 100) as $chunk) {
                 print('[' . $prefix . '] ' . $chunk . "\n");
+                error_log('[' . $prefix . '] ' . $chunk);
             }
+        }
+    }
+
+    public static function logLong($message, $prefix, $useStdout) {
+        if ($useStdout) {
+            self::stdoutLogLong($message, $prefix);
+        } else {
+            self::errorLogLong($message, $prefix);
         }
     }
 
@@ -45,11 +57,7 @@ class utilities {
         $ch = curl_init($url);
         curl_setopt($ch, \CURLOPT_RETURNTRANSFER, 1);
 
-        if ($useStdout) {
-            self::stdoutLogLong('GET ' . $url, 'WARPWIRE');
-        } else {
-            self::errorLogLong('GET ' . $url, 'WARPWIRE');
-        }
+        self::logLong('GET ' . $url, 'WARPWIRE', $useStdout);
 
         if ($token !== null) {
             curl_setopt($ch, \CURLOPT_HTTPHEADER, ['x-auth-wwtoken: ' . $token]);
@@ -91,11 +99,7 @@ class utilities {
         ]);
         curl_setopt($ch, \CURLOPT_RETURNTRANSFER, 1);
 
-        if ($useStdout) {
-            self::stdoutLogLong('POST ' . $url, 'WARPWIRE');
-        } else {
-            self::errorLogLong('POST ' . $url, 'WARPWIRE');
-        }
+        self::logLong('POST ' . $url, 'WARPWIRE', $useStdout);
 
         $result = curl_exec($ch);
         $responseCode = intval(\curl_getinfo($ch, \CURLINFO_RESPONSE_CODE));
@@ -142,22 +146,117 @@ class utilities {
     }
 
     public static function isConfigured() {
-        return !empty(get_config('local_warpwire', 'warpwire_lti')) &&
-               !empty(get_config('local_warpwire', 'warpwire_key')) &&
-               !empty(get_config('local_warpwire', 'warpwire_secret'));
+        $allConfig = (array)get_config('local_warpwire');
+        return !empty($allConfig['warpwire_lti']) &&
+               !empty($allConfig['warpwire_key']) &&
+               !empty($allConfig['warpwire_secret']);
     }
 
     public static function isFullConfigured() {
-        return self::isConfigured() &&
-               !empty(get_config('local_warpwire', 'warpwire_url')) &&
-               !empty(get_config('local_warpwire', 'warpwire_admin_username')) &&
-               !empty(get_config('local_warpwire', 'warpwire_admin_password'));
+        $allConfig = (array)get_config('local_warpwire');
+        return !empty($allConfig['warpwire_lti']) &&
+               !empty($allConfig['warpwire_key']) &&
+               !empty($allConfig['warpwire_secret']) &&
+               !empty($allConfig['warpwire_url']) &&
+               !empty($allConfig['warpwire_admin_username']) &&
+               !empty($allConfig['warpwire_admin_password']);
     }
 
     public static function setConfigLog($name, $value) {
         $oldValue = get_config('local_warpwire', $name);
         set_config($name, $value, 'local_warpwire');
         add_to_config_log($name, $oldValue, $value, 'local_warpwire');
+    }
+
+    public static function setupLtiTool($enabled, $useStdout = false) {
+        global $CFG;
+
+        try {
+            $existingLtiIds = [];
+            $existingTypes = \lti_get_lti_types();
+            foreach ($existingTypes as $existingType) {
+                if ($existingType->name === 'Warpwire Graded Activity') {
+                    $existingLtiIds[] = $existingType->id;
+                }
+            }
+
+            if (preg_match('!^https?://(localhost|127.0.0.1)!', $CFG->wwwroot)) {
+                $icon = '/local/warpwire/pix/icon.png';
+            } else {
+                $icon = $CFG->wwwroot . '/local/warpwire/pix/icon.png';
+            }
+
+            $toolUrl = get_config('local_warpwire', 'warpwire_url') . 'api/ltix/';
+
+            $data = (object)[
+                'lti_typename' => 'Warpwire Graded Activity',
+                'lti_toolurl' => $toolUrl,
+                'lti_description' => get_string('lti_tool_description', 'local_warpwire'),
+                'lti_version' => \LTI_VERSION_1,
+                'lti_resourcekey' => get_config('local_warpwire', 'warpwire_key'),
+                'lti_password' => get_config('local_warpwire', 'warpwire_secret'),
+                'lti_clientid' => '',
+                'lti_keytype' => \LTI_JWK_KEYSET,
+                'lti_customparameters' => '',
+                'lti_coursevisible' => $enabled ? \LTI_COURSEVISIBLE_ACTIVITYCHOOSER : \LTI_COURSEVISIBLE_NO,
+                'typeid' => 1,
+                'lti_launchcontainer' => \LTI_LAUNCH_CONTAINER_EMBED_NO_BLOCKS,
+                'lti_contentitem' => '1',
+                'lti_toolurl_ContentItemSelection' => $toolUrl,
+                'oldicon' => $icon,
+                'lti_icon' => $icon,
+                'ltiservice_gradesynchronization' => '2',
+                'ltiservice_memberships' => '1',
+                'ltiservice_toolsettings' => '1',
+                'lti_sendname' => \LTI_SETTING_ALWAYS,
+                'lti_sendemailaddr' => \LTI_SETTING_ALWAYS,
+                'lti_acceptgrades' => \LTI_SETTING_ALWAYS,
+                'lti_organizationid_default' => 'SITEID',
+                'lti_organizationid' => '',
+                'lti_organizationurl' => '',
+                'tab' => '',
+                'course' => 1
+            ];
+
+            if (!empty($existingLtiIds)) {
+                foreach ($existingLtiIds as $existingLtiId) {
+                    \local_warpwire\utilities::logLong('Updating existing Warpwire LTI type (id: ' . $existingLtiId . ')', 'WARPWIRE LTI', $useStdout);
+                    $type = new \stdClass();
+                    $type->state = \LTI_TOOL_STATE_CONFIGURED;
+                    $type->id = $existingLtiId;
+                    \lti_load_type_if_cartridge($data);
+                    \lti_update_type($type, $data);
+                }
+            } else {
+                \local_warpwire\utilities::logLong('Creating new Warpwire LTI type', 'WARPWIRE LTI', $useStdout);
+                $type = new \stdClass();
+                $type->state = \LTI_TOOL_STATE_CONFIGURED;
+                \lti_load_type_if_cartridge($data);
+                \lti_add_type($type, $data);
+            }
+        } catch(\Throwable $ex) {
+            \local_warpwire\utilities::logLong('Failed to configure LTI tool: ' . $ex, 'WARPWIRE LTI', $useStdout);
+        }
+    }
+
+    public static function removeLtiTool($useStdout = false) {
+        try {
+            $existingLtiId = null;
+            $existingTypes = \lti_get_lti_types();
+            foreach ($existingTypes as $existingType) {
+                if ($existingType->name === 'Warpwire Graded Activity') {
+                    $existingLtiId = $existingType->id;
+                    \local_warpwire\utilities::logLong('Removing Warpwire LTI type with id ' . $existingLtiId, 'WARPWIRE LTI', $useStdout);
+                    \lti_delete_type($existingLtiId);
+                }
+            }
+
+            if ($existingLtiId === null) {
+                \local_warpwire\utilities::logLong('No LTI tool to remove', 'WARPWIRE LTI', $useStdout);
+            }
+        } catch(\Throwable $ex) {
+            \local_warpwire\utilities::logLong('Failed to remove LTI tool: ' . $ex, 'WARPWIRE LTI', $useStdout);
+        }
     }
 
     private static function authorize() {

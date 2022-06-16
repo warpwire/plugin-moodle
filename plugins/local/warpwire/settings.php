@@ -34,10 +34,6 @@ if ($hassiteconfig) {
     $setting->plugin = 'local_warpwire';
     $settings->add($setting);
 
-    $setting = new admin_setting_configtext('local_warpwire/warpwire_url', get_string('setting_url_label', 'local_warpwire'), get_string('setting_url_desc', 'local_warpwire'), '', PARAM_TEXT);
-    $setting->plugin = 'local_warpwire';
-    $settings->add($setting);
-
     $setting = new admin_setting_configtext('local_warpwire/warpwire_lti', get_string('setting_lti_label', 'local_warpwire'), get_string('setting_lti_desc', 'local_warpwire'), '', PARAM_TEXT);
     $setting->plugin = 'local_warpwire';
     $settings->add($setting);
@@ -47,6 +43,14 @@ if ($hassiteconfig) {
     $settings->add($setting);
 
     $setting = new admin_setting_configpasswordunmask('local_warpwire/warpwire_secret', get_string('setting_secret_label', 'local_warpwire'), get_string('setting_secret_desc', 'local_warpwire'), '', PARAM_TEXT);
+    $setting->plugin = 'local_warpwire';
+    $settings->add($setting);
+
+    $setting = new admin_setting_heading('local_warpwire/heading2', get_string('setting_heading2_label', 'local_warpwire'), get_string('setting_heading2_desc', 'local_warpwire'));
+    $setting->plugin = 'local_warpwire';
+    $settings->add($setting);
+
+    $setting = new admin_setting_configtext('local_warpwire/warpwire_url', get_string('setting_url_label', 'local_warpwire'), get_string('setting_url_desc', 'local_warpwire'), '', PARAM_TEXT);
     $setting->plugin = 'local_warpwire';
     $settings->add($setting);
 

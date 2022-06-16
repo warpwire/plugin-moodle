@@ -35,6 +35,8 @@ class setup_status_task extends \core\task\adhoc_task {
                 \local_warpwire\utilities::stdoutLogLong('Failed to configure after 600 seconds', 'WARPWIRE STATUS');
             }
         }
+
+        \local_warpwire\utilities::setupLtiTool(true);
     }
 
     private function getStatus($statusUrl) {

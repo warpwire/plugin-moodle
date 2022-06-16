@@ -100,7 +100,7 @@ function warpwire_external_content($user, $course, $sectionId, $moduleId)
     // Add oauth_callback to be compliant with the 1.0A spec.
     $params['oauth_callback'] = 'about:blank';
     $params['lti_version'] = 'LTI-1p0';
-    $params['lti_message_type'] = 'ContentItemSelectionRequest';
+    $params['lti_message_type'] = 'ContentItemSelection';
 
     if (!empty($CFG->mod_lti_institution_name)) {
         $params['tool_consumer_instance_name'] = trim(html_to_text($CFG->mod_lti_institution_name, 0));
