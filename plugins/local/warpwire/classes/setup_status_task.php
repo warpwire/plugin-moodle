@@ -82,11 +82,10 @@ class setup_status_task extends \core\task\adhoc_task {
                 ];
             }
 
-            \local_warpwire\utilities::setConfigLog('warpwire_lti',  'https://' . $internalDomain . '/api/lti/');
+            \local_warpwire\utilities::setConfigLog('warpwire_url',  'https://' . $internalDomain . '/');
             \local_warpwire\utilities::setConfigLog('warpwire_key',  $initialLtiKey['key']);
             \local_warpwire\utilities::setConfigLog('warpwire_secret',  $initialLtiKey['secret']);
 
-            \local_warpwire\utilities::setConfigLog('warpwire_url',  'https://' . $internalDomain . '/');
             \local_warpwire\utilities::setConfigLog('warpwire_admin_username',  $initialAdminCredentials['unique_id']);
             \local_warpwire\utilities::setConfigLog('warpwire_admin_password',  $initialAdminCredentials['password']);
 

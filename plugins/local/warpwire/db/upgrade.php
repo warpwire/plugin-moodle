@@ -14,18 +14,20 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-defined('MOODLE_INTERNAL') || die('Invalid access');
+defined('MOODLE_INTERNAL') || die();
 
-define('LOCAL_WARPWIRE_PLUGIN_NAME', 'local_warpwire');
+function xmldb_local_warpwire_upgrade($oldversion) {
+    if ($oldversion < 20220712) {
+        $lti = get_config('local_warpwire', 'warpwire_lti');
+        $url = get_config('local_warpwire', 'warpwire_url');
 
-define('LOCAL_WARPWIRE_DEFAULT_URL', 'https://example.warpwire.com/');
-define('LOCAL_WARPWIRE_URL_PARAMETER', 'warpwire_url');
+        if (empty($url) && !empty($lti)) {
+            $newUrl = preg_replace('!/api/ltix?/$!', '/', $lti);
+            set_config('local_warpwire', $newUrl);
+        }
 
-define('LOCAL_WARPWIRE_DEFAULT_KEY', 'warpwire_key');
-define('LOCAL_WARPWIRE_KEY_PARAMETER', 'warpwire_key');
+        upgrade_plugin_savepoint(true, 20220712, 'local', 'warpwire');
+    }
 
-define('LOCAL_WARPWIRE_DEFAULT_SECRET', 'warpwire_secret');
-define('LOCAL_WARPWIRE_SECRET_PARAMETER', 'warpwire_secret');
-
-$path = dirname(__FILE__) . '/library';
-set_include_path(get_include_path() . PATH_SEPARATOR . $path);
+    return true;
+}

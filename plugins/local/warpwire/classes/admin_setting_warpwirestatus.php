@@ -137,7 +137,7 @@ class admin_setting_warpwirestatus extends \admin_setting {
                 $html .= \html_writer::tag('p', get_string('notice_error_usage', 'local_warpwire'));
             }
         } else if (\local_warpwire\utilities::isConfigured()) {
-            $baseUrl = get_config('local_warpwire', 'warpwire_lti');
+            $baseUrl = get_config('local_warpwire', 'warpwire_url');
 
             $clientIdentifier = explode('.', parse_url($baseUrl, PHP_URL_HOST))[0];
 

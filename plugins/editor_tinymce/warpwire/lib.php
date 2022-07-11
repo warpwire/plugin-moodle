@@ -36,7 +36,12 @@ class tinymce_warpwire extends editor_tinymce_plugin
         // build the query params to pass
         $url_params_query = http_build_query(array('mode' => 'plugin'), '', '&');
 
-        $warpwireUrl = get_config('local_warpwire', 'warpwire_lti');
+        $warpwireUrl = get_config('local_warpwire', 'warpwire_url');
+        if (empty($warpwireUrl)) {
+            return array('warpwire_url' => $CFG->wwwroot . '/local/warpwire/html/setup.html');
+        }
+
+        $warpwireUrl = \rtrim($warpwireUrl, '/') . '/api/lti/';
         $url_parts = parse_url($warpwireUrl . '?' . $url_params_query);
 
         $parameters = array();
