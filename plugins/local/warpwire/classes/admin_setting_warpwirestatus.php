@@ -18,14 +18,14 @@ namespace local_warpwire;
 
 class admin_setting_warpwirestatus extends \admin_setting {
     private static $METRIC_NAMES = [
-        'storage' => 'Storage',
+        'duration' => 'Video Duration',
+        'video' => 'Number of Videos',
+        'closed_caption_duration' => 'Machine Captions',
+        'closed_caption_cost' => 'Human Captions',
         'bandwidth' => 'Total Bandwidth',
         'public_bandwidth' => 'Public Bandwidth',
         'internal_bandwidth' => 'Non-Public Bandwidth',
-        'duration' => 'Video Duration',
-        'video' => 'Number of Videos',
-        'closed_caption_cost' => 'Human Captions',
-        'closed_caption_duration' => 'Machine Captions'
+        'storage' => 'Storage'
     ];
 
     public function __construct() {
