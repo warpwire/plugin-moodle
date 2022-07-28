@@ -60,12 +60,13 @@ class admin_setting_warpwirestatus extends \admin_setting {
             $baseUrl = get_config('local_warpwire', 'warpwire_url');
 
             $clientIdentifier = explode('.', parse_url($baseUrl, PHP_URL_HOST))[0];
-
             $html .= \html_writer::tag('p', get_string('notice_client_identifier', 'local_warpwire', $clientIdentifier));
 
             try {
                 $bootstrap = \local_warpwire\utilities::makeAuthenticatedGetRequest("{$baseUrl}api/bootstrap/");
                 $usageData = \local_warpwire\utilities::makeAuthenticatedGetRequest("{$baseUrl}api/upload/limit/all/");
+
+                $html .= \html_writer::tag('p', get_string('notice_account_type', 'local_warpwire', $bootstrap['client']['isTrial'] ? 'Trial' : 'Paid'));
 
                 if ($bootstrap['client']['isTrial'] ?? false) {
                     $html .= \html_writer::tag('p', get_string('notice_usage_limits_trial', 'local_warpwire'));

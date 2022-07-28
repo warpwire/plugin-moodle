@@ -65,6 +65,7 @@ $string['notice_setup_error_client_exists'] = 'Warpwire site already exists. Ple
 $string['notice_setup_success'] = 'Setup request has been sent.';
 
 $string['notice_client_identifier'] = 'Account ID: <b>{$a}</b>';
+$string['notice_account_type'] = 'Account Type: <b>{$a}</b>';
 $string['notice_usage_limits_trial'] = 'During your trial, you may only upload a small amount of content. If you\'d like to upgrade to a full version, please contact Moodle.us support.';
 $string['notice_usage_limits'] = 'Warpwire limits the amount of content that may be added or viewed before purchasing more. If you wish to upgrade, please contact Moodle.us support.';
 $string['notice_error_usage'] = 'Unable to retrieve usage information.';
