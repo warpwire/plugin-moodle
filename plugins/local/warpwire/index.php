@@ -34,11 +34,13 @@ function warpwire_external_content($user, $course, $sectionId, $moduleId)
 {
     global $CFG;
 
-    $warpwireLtiUrl = get_config('local_warpwire', 'warpwire_lti');
-    if (empty($warpwireLtiUrl)) {
+    $warpwireUrl = get_config('local_warpwire', 'warpwire_url');
+    if (empty($warpwireUrl)) {
         echo \html_writer::tag('p', get_string('content_not_configured', 'local_warpwire'));
         return;
     }
+
+    $warpwireLtiUrl = \rtrim($warpwireUrl, '/') . '/api/lti/';
 
     $lti_url_parts = parse_url($warpwireLtiUrl);
     $url_parts = parse_url($_GET['url']);
@@ -124,12 +126,12 @@ function warpwire_external_content($user, $course, $sectionId, $moduleId)
     }
 
     // build the OAuth signature
-    $sig = build_signature('POST', get_config('local_warpwire', 'warpwire_lti'), $params, get_config('local_warpwire', 'warpwire_secret'));
+    $sig = build_signature('POST', $warpwireLtiUrl, $params, get_config('local_warpwire', 'warpwire_secret'));
 
     $params['oauth_signature'] = $sig;
 
     // build the form to submit LTI credentials
-    $content = '<html><head></head><body><form id="warpwire_lti_post" method="POST" enctype="application/x-www-form-urlencoded" action="'.get_config('local_warpwire', 'warpwire_lti').'">'.PHP_EOL;
+    $content = '<html><head></head><body><form id="warpwire_lti_post" method="POST" enctype="application/x-www-form-urlencoded" action="'.$warpwireLtiUrl.'">'.PHP_EOL;
     foreach ($params as $key => $value) {
         $content .= '<input type="hidden" name="'.$key.'" value="'.$value.'" />';
     }

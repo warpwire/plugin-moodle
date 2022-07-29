@@ -17,6 +17,17 @@
 namespace local_warpwire;
 
 class admin_setting_warpwirestatus extends \admin_setting {
+    private static $METRIC_NAMES = [
+        'duration' => 'Video Duration',
+        'video' => 'Number of Videos',
+        'closed_caption_duration' => 'Machine Captions',
+        'closed_caption_cost' => 'Human Captions',
+        'bandwidth' => 'Total Bandwidth',
+        'public_bandwidth' => 'Public Bandwidth',
+        'internal_bandwidth' => 'Non-Public Bandwidth',
+        'storage' => 'Storage'
+    ];
+
     public function __construct() {
         $this->nosave = true;
         $this->plugin = 'local_warpwire';
@@ -49,12 +60,13 @@ class admin_setting_warpwirestatus extends \admin_setting {
             $baseUrl = get_config('local_warpwire', 'warpwire_url');
 
             $clientIdentifier = explode('.', parse_url($baseUrl, PHP_URL_HOST))[0];
-
             $html .= \html_writer::tag('p', get_string('notice_client_identifier', 'local_warpwire', $clientIdentifier));
 
             try {
                 $bootstrap = \local_warpwire\utilities::makeAuthenticatedGetRequest("{$baseUrl}api/bootstrap/");
-                $usage = \local_warpwire\utilities::makeAuthenticatedGetRequest("{$baseUrl}api/usage/summary/current/");
+                $usageData = \local_warpwire\utilities::makeAuthenticatedGetRequest("{$baseUrl}api/upload/limit/all/");
+
+                $html .= \html_writer::tag('p', get_string('notice_account_type', 'local_warpwire', $bootstrap['client']['isTrial'] ? 'Trial' : 'Paid'));
 
                 if ($bootstrap['client']['isTrial'] ?? false) {
                     $html .= \html_writer::tag('p', get_string('notice_usage_limits_trial', 'local_warpwire'));
@@ -62,70 +74,47 @@ class admin_setting_warpwirestatus extends \admin_setting {
                     $html .= \html_writer::tag('p', get_string('notice_usage_limits', 'local_warpwire'));
                 }
 
-                $usageInfo = [];
-
-                foreach ($usage['summary'] as $key => $value) {
-                    if (preg_match('/^(actual|allowed)_(.*)_(tb|dollars|minutes|hours|count)$/', $key, $matches)) {
-                        list (, $type, $metric) = $matches;
-                        if ($value === null) {
-                            $valueString = 'No Limit';
-                        }
-                        else if (in_array($metric, ['storage', 'total_bandwidth', 'public_bandwidth', 'internal_bandwidth'])) {
-                            $value *= pow(10, 12);
-                            if ($value <= 0) {
-                                $valueString = '0 Bytes';
-                            } else {
-                                $sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
-                                $order = floor(log($value) / log(1000));
-                                $valueString = sprintf('%0.1d %s', $value / pow(1000, $order), $sizes[$order]);
-                            }
-                        } elseif ($metric === 'duration') {
-                            $valueString = sprintf('%0.1f hours', round($value, 1));
-                        } elseif ($metric === 'caption_duration') {
-                            $valueString = sprintf('%0.1f hours', $value);
-                        } elseif ($metric === 'caption_cost') {
-                            $valueString = sprintf('$%0.2f', round($value, 2));
-                        } else {
-                            $valueString = sprintf('%d', $value);
-                        }
-                        $usageInfo[$metric][$type] = ['value' => $value, 'string' => $valueString];
-                    } elseif (\preg_match('/^(.*)_used_percent$/', $key, $matches)) {
-                        list (, $metric) = $matches;
-                        if ($value === null) {
-                            $valueString = 'N/A';
-                            $statusHtml = \html_writer::img($OUTPUT->image_url('t/unlock'), 'Not Allowed', ['style' => 'margin-right: 5px; width: 1em; height: 1em']) . \html_writer::span('Not Allowed');
-                        } else {
-                            $valueString = sprintf('%d%%', $value);
-                            if ($value < 100) {
-                                $statusHtml = \html_writer::img($OUTPUT->image_url('i/checkedcircle'), 'OK', ['style' => 'margin-right: 5px; width: 1em; height: 1em']) . \html_writer::span('OK');
-                            } else {
-                                $statusHtml = \html_writer::img($OUTPUT->image_url('i/warning'), 'Limit Reached', ['style' => 'margin-right: 5px; width: 1em; height: 1em']) . \html_writer::span('Limit Reached');
-                            }
-                        }
-                        $usageInfo[$metric]['percent'] = ['value' => $value, 'string' => $valueString, 'statusHtml' => $statusHtml];
+                $sortedUsageData = [];
+                foreach (array_keys(self::$METRIC_NAMES) as $metric) {
+                    if (isset($usageData[$metric])) {
+                        $sortedUsageData[$metric] = $usageData[$metric];
                     }
                 }
-
-                ksort($usageInfo);
-
-                $metricNames = [
-                    'storage' => 'Storage',
-                    'total_bandwidth' => 'Total Bandwidth',
-                    'public_bandwidth' => 'Public Bandwidth',
-                    'internal_bandwidth' => 'Non-Public Bandwidth',
-                    'duration' => 'Video Duration',
-                    'video' => 'Number of Videos',
-                    'caption_cost' => 'Human Captions',
-                    'caption_duration' => 'Machine Captions'
-                ];
 
                 $header = ['', 'Current Usage', 'Limit', '% Used', ''];
                 $data = [];
 
-                foreach ($usageInfo as $metric => $metricInfo) {
-                    if (isset($metricInfo['allowed']['value']) && is_numeric($metricInfo['allowed']['value']) && $metricInfo['allowed']['value'] > 0) {
-                        $data[] = [ $metricNames[$metric] ?? $metric, $metricInfo['actual']['string'], $metricInfo['allowed']['string'], $metricInfo['percent']['string'] ?? '', $metricInfo['percent']['statusHtml'] ?? '' ];
+                foreach ($sortedUsageData as $metric => $info) {
+                    $actual = $info['usage'];
+                    $allowed = $info['limit'];
+
+                    if ($allowed === null || !is_numeric($allowed) || $allowed <= 0) {
+                        continue;
                     }
+
+                    if ($allowed === null) {
+                        $percentString = 'N/A';
+                        $statusHtml = \html_writer::img($OUTPUT->image_url('i/checkedcircle'), 'OK', ['style' => 'margin-right: 5px; width: 1em; height: 1em']) . \html_writer::span('OK');
+                    } elseif ($allowed === 0) {
+                        $percentString = 'N/A';
+                        $statusHtml = \html_writer::img($OUTPUT->image_url('t/unlock'), 'Not Allowed', ['style' => 'margin-right: 5px; width: 1em; height: 1em']) . \html_writer::span('Not Allowed');
+                    } else {
+                        $percent = ($actual / $allowed) * 100;
+                        $percentString = sprintf('%d%%', $percent);
+                        if ($percent < 100) {
+                            $statusHtml = \html_writer::img($OUTPUT->image_url('i/checkedcircle'), 'OK', ['style' => 'margin-right: 5px; width: 1em; height: 1em']) . \html_writer::span('OK');
+                        } else {
+                            $statusHtml = \html_writer::img($OUTPUT->image_url('i/warning'), 'Limit Reached', ['style' => 'margin-right: 5px; width: 1em; height: 1em']) . \html_writer::span('Limit Reached');
+                        }
+                    }
+
+                    $data[] = [
+                        self::$METRIC_NAMES[$metric] ?? $metric,
+                        $this->prettyPrintAmount($metric, $actual),
+                        $this->prettyPrintAmount($metric, $allowed),
+                        $percentString,
+                        $statusHtml
+                    ];
                 }
 
                 $table = new \html_table();
@@ -137,7 +126,7 @@ class admin_setting_warpwirestatus extends \admin_setting {
                 $html .= \html_writer::tag('p', get_string('notice_error_usage', 'local_warpwire'));
             }
         } else if (\local_warpwire\utilities::isConfigured()) {
-            $baseUrl = get_config('local_warpwire', 'warpwire_lti');
+            $baseUrl = get_config('local_warpwire', 'warpwire_url');
 
             $clientIdentifier = explode('.', parse_url($baseUrl, PHP_URL_HOST))[0];
 
@@ -167,5 +156,29 @@ class admin_setting_warpwirestatus extends \admin_setting {
         return \html_writer::start_div('box generalbox py-3', $attrs)
              . \html_writer::link(new \moodle_url('/local/warpwire/setup.php', ['action' => 'setup', 'sesskey' => sesskey()]), get_string('action_start_trial', 'local_warpwire'), ['class' => 'btn btn-primary'])
              . \html_writer::end_div();
+    }
+
+    private function prettyPrintAmount($metric, $value) {
+        if ($value === null) {
+            return 'No Limit';
+        } elseif (in_array($metric, ['storage', 'bandwidth', 'public_bandwidth', 'internal_bandwidth'])) {
+            if ($value <= 0) {
+                return '0 Bytes';
+            } else {
+                $sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+                $order = floor(log($value) / log(1000));
+                return sprintf('%0.1d %s', $value / pow(1000, $order), $sizes[$order]);
+            }
+        } elseif ($metric === 'duration') {
+            $value /= 3600.0;
+            return sprintf('%0.1f hours', round($value, 1));
+        } elseif ($metric === 'closed_caption_duration') {
+            $value /= 3600.0;
+            return sprintf('%0.1f hours', $value);
+        } elseif ($metric === 'closed_caption_cost') {
+            return sprintf('$%0.2f', round($value, 2));
+        } else {
+            return sprintf('%d', $value);
+        }
     }
 }
