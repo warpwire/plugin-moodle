@@ -185,7 +185,7 @@ class utilities {
                 $icon = $CFG->wwwroot . '/local/warpwire/pix/icon.png';
             }
 
-            $toolUrl = get_config('local_warpwire', 'warpwire_url') . 'api/ltix/';
+            $toolUrl = \rtrim(get_config('local_warpwire', 'warpwire_url'), '/') . '/api/ltix/';
 
             $data = (object)[
                 'lti_typename' => 'Warpwire Graded Activity',

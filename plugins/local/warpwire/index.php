@@ -40,7 +40,7 @@ function warpwire_external_content($user, $course, $sectionId, $moduleId)
         return;
     }
 
-    $warpwireLtiUrl = \rtrim($warpwireUrl, '/') . '/api/lti';
+    $warpwireLtiUrl = \rtrim($warpwireUrl, '/') . '/api/lti/';
 
     $lti_url_parts = parse_url($warpwireLtiUrl);
     $url_parts = parse_url($_GET['url']);
