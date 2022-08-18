@@ -19,46 +19,44 @@ defined('MOODLE_INTERNAL') || die('Invalid access');
 require_once('lang/en/local_warpwire.php');
 
 if ($hassiteconfig) {
-    $settings = new admin_settingpage(
-            'local_warpwire',
-            get_string('pluginname', 'local_warpwire')
-        );
+    $settings = new admin_settingpage('local_warpwire', get_string('pluginname', 'local_warpwire'));
     $ADMIN->add('localplugins', $settings);
 
-    //heading
-    $setting = new admin_setting_heading(
-            'local_warpwire/heading',
-            '', get_string('setting_heading_desc', 'local_warpwire')
-        );
-    $settings->add($setting);
+    if (\local_warpwire\utilities::canStartTrial()) {
+        $ADMIN->add('localplugins', new admin_externalpage('warpwire_trial', get_string('setting_externalpage_trial', 'local_warpwire'), new moodle_url('/local/warpwire/setup.php', ['action' => 'setup']), 'moodle/site:config', true));
+    }
 
-    //site lti launch url
-    $setting = new admin_setting_configtext(
-            'local_warpwire/warpwire_lti',
-            get_string('setting_lti_label', 'local_warpwire'),
-            get_string('setting_lti_desc', 'local_warpwire'),
-            'https://example.warpwire.com/api/lti/', PARAM_TEXT
-        );
+    $setting = new admin_setting_heading('local_warpwire/status_heading', get_string('status_heading_label', 'local_warpwire'), get_string('status_heading_desc', 'local_warpwire'));
     $setting->plugin = 'local_warpwire';
     $settings->add($setting);
 
-    //site lti launch url
-    $setting = new admin_setting_configtext(
-            'local_warpwire/warpwire_key',
-            get_string('setting_key_label', 'local_warpwire'),
-            get_string('setting_key_desc', 'local_warpwire'),
-            'warpwire_key', PARAM_TEXT
-        );
+    $settings->add(new \local_warpwire\admin_setting_warpwirestatus());
+
+    $setting = new admin_setting_heading('local_warpwire/heading', get_string('setting_heading_label', 'local_warpwire'), get_string('setting_heading_desc', 'local_warpwire'));
     $setting->plugin = 'local_warpwire';
     $settings->add($setting);
 
-    //site lti launch url
-    $setting = new admin_setting_configtext(
-            'local_warpwire/warpwire_secret',
-            get_string('setting_secret_label', 'local_warpwire'),
-            get_string('setting_secret_desc', 'local_warpwire'),
-            'warpwire_secret', PARAM_TEXT
-        );
+    $setting = new admin_setting_configtext('local_warpwire/warpwire_url', get_string('setting_url_label', 'local_warpwire'), get_string('setting_url_desc', 'local_warpwire'), '', PARAM_TEXT);
     $setting->plugin = 'local_warpwire';
-    $settings->add($setting); 
+    $settings->add($setting);
+
+    $setting = new admin_setting_configtext('local_warpwire/warpwire_key', get_string('setting_key_label', 'local_warpwire'), get_string('setting_key_desc', 'local_warpwire'), '', PARAM_TEXT);
+    $setting->plugin = 'local_warpwire';
+    $settings->add($setting);
+
+    $setting = new admin_setting_configpasswordunmask('local_warpwire/warpwire_secret', get_string('setting_secret_label', 'local_warpwire'), get_string('setting_secret_desc', 'local_warpwire'), '', PARAM_TEXT);
+    $setting->plugin = 'local_warpwire';
+    $settings->add($setting);
+
+    $setting = new admin_setting_heading('local_warpwire/heading2', get_string('setting_heading2_label', 'local_warpwire'), get_string('setting_heading2_desc', 'local_warpwire'));
+    $setting->plugin = 'local_warpwire';
+    $settings->add($setting);
+
+    $setting = new admin_setting_configtext('local_warpwire/warpwire_admin_username', get_string('setting_admin_username_label', 'local_warpwire'), get_string('setting_admin_username_desc', 'local_warpwire'), '', PARAM_TEXT);
+    $setting->plugin = 'local_warpwire';
+    $settings->add($setting);
+
+    $setting = new admin_setting_configpasswordunmask('local_warpwire/warpwire_admin_password', get_string('setting_admin_password_label', 'local_warpwire'), get_string('setting_admin_password_desc', 'local_warpwire'), '', PARAM_TEXT);
+    $setting->plugin = 'local_warpwire';
+    $settings->add($setting);
 }

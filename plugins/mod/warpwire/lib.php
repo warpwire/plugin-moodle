@@ -40,10 +40,14 @@ function warpwire_supports($feature) {
         case FEATURE_SHOW_DESCRIPTION:
             return true;
         case FEATURE_GRADE_HAS_GRADE:
-            return true;
+            return false;
         case FEATURE_BACKUP_MOODLE2:
             return true;
         default:
+            if (defined('FEATURE_MOD_PURPOSE') && defined('MOD_PURPOSE_CONTENT') && $feature == FEATURE_MOD_PURPOSE) {
+                // makes the icon blue
+                return MOD_PURPOSE_CONTENT;
+            }
             return null;
     }
 }
@@ -64,8 +68,6 @@ function warpwire_add_instance(stdClass $warpwire, mod_warpwire_mod_form $mform 
 
     $warpwire->id = $DB->insert_record('warpwire', $warpwire);
 
-    warpwire_grade_item_update($warpwire);
-
     return $warpwire->id;
 }
 
@@ -85,8 +87,6 @@ function warpwire_update_instance(stdClass $warpwire, mod_warpwire_mod_form $mfo
     // You may have to add extra stuff in here.
 
     $result = $DB->update_record('warpwire', $warpwire);
-
-    warpwire_grade_item_update($warpwire);
 
     return $result;
 }
@@ -133,8 +133,6 @@ function warpwire_delete_instance($id) {
     // Delete any dependent records here.
 
     $DB->delete_records('warpwire', array('id' => $warpwire->id));
-
-    warpwire_grade_item_delete($warpwire);
 
     return true;
 }
@@ -224,112 +222,6 @@ function warpwire_cron () {
  */
 function warpwire_get_extra_capabilities() {
     return array();
-}
-
-/* Gradebook API */
-
-/**
- * Is a given scale used by the instance of warpwire?
- *
- * This function returns if a scale is being used by one Warpwire Activity Module
- * if it has support for grading and scales.
- *
- * @param int $warpwireid ID of an instance of this module
- * @param int $scaleid ID of the scale
- * @return bool true if the scale is used by the given warpwire instance
- */
-function warpwire_scale_used($warpwireid, $scaleid) {
-    global $DB;
-
-    if ($scaleid and $DB->record_exists('warpwire', array('id' => $warpwireid, 'grade' => -$scaleid))) {
-        return true;
-    } else {
-        return false;
-    }
-}
-
-/**
- * Checks if scale is being used by any instance of the Warpwire Activity Module.
- *
- * @param int $scaleid ID of the scale
- * @return boolean true if the scale is used by any warpwire instance
- */
-function warpwire_scale_used_anywhere($scaleid) {
-    global $DB;
-
-    if ($scaleid and $DB->record_exists('warpwire', array('grade' => -$scaleid))) {
-        return true;
-    } else {
-        return false;
-    }
-}
-
-/**
- * Creates or updates grade item for the given Warpwire Activity Module instance
- *
- * Needed by {@link grade_update_mod_grades()}.
- *
- * @param stdClass $warpwire instance object with extra cmidnumber and modname property
- * @param bool $reset reset grades in the gradebook
- * @return void
- */
-function warpwire_grade_item_update(stdClass $warpwire, $reset=false) {
-    global $CFG;
-    require_once($CFG->libdir.'/gradelib.php');
-
-    $item = array();
-    $item['itemname'] = clean_param($warpwire->name, PARAM_NOTAGS);
-    $item['gradetype'] = GRADE_TYPE_VALUE;
-
-    if ($warpwire->grade > 0) {
-        $item['gradetype'] = GRADE_TYPE_VALUE;
-        $item['grademax']  = $warpwire->grade;
-        $item['grademin']  = 0;
-    } else if ($warpwire->grade < 0) {
-        $item['gradetype'] = GRADE_TYPE_SCALE;
-        $item['scaleid']   = -$warpwire->grade;
-    } else {
-        $item['gradetype'] = GRADE_TYPE_NONE;
-    }
-
-    if ($reset) {
-        $item['reset'] = true;
-    }
-
-    grade_update('mod/warpwire', $warpwire->course, 'mod', 'warpwire',
-            $warpwire->id, 0, null, $item);
-}
-
-/**
- * Delete grade item for given Warpwire Activity Module instance
- *
- * @param stdClass $warpwire instance object
- * @return grade_item
- */
-function warpwire_grade_item_delete($warpwire) {
-    global $CFG;
-    require_once($CFG->libdir.'/gradelib.php');
-
-    return grade_update('mod/warpwire', $warpwire->course, 'mod', 'warpwire',
-            $warpwire->id, 0, null, array('deleted' => 1));
-}
-
-/**
- * Update Warpwire Activity Module grades in the gradebook
- *
- * Needed by {@link grade_update_mod_grades()}.
- *
- * @param stdClass $warpwire instance object with extra cmidnumber and modname property
- * @param int $userid update grade of specific user only, 0 means all participants
- */
-function warpwire_update_grades(stdClass $warpwire, $userid = 0) {
-    global $CFG, $DB;
-    require_once($CFG->libdir.'/gradelib.php');
-
-    // Populate array of grade objects indexed by userid.
-    $grades = array();
-
-    grade_update('mod/warpwire', $warpwire->course, 'mod', 'warpwire', $warpwire->id, 0, $grades);
 }
 
 /* File API */

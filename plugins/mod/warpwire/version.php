@@ -14,18 +14,23 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-defined('MOODLE_INTERNAL') || die('Invalid access');
+/**
+ * Defines the version and other meta-info about the Warpwire Activity Module
+ *
+ * @package    mod_warpwire
+ * @copyright  2016 Warpwire <https://warpwire.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
-define('LOCAL_WARPWIRE_PLUGIN_NAME', 'local_warpwire');
+defined('MOODLE_INTERNAL') || die();
 
-define('LOCAL_WARPWIRE_DEFAULT_URL', 'https://example.warpwire.com/');
-define('LOCAL_WARPWIRE_URL_PARAMETER', 'warpwire_url');
+$plugin->component = 'mod_warpwire';
+$plugin->version   = 2022081800;
+$plugin->release   = '4.1.0';
+$plugin->maturity  = MATURITY_STABLE;
+$plugin->requires  = 2019111800;
+$plugin->cron      = 0;
 
-define('LOCAL_WARPWIRE_DEFAULT_KEY', 'warpwire_key');
-define('LOCAL_WARPWIRE_KEY_PARAMETER', 'warpwire_key');
-
-define('LOCAL_WARPWIRE_DEFAULT_SECRET', 'warpwire_secret');
-define('LOCAL_WARPWIRE_SECRET_PARAMETER', 'warpwire_secret');
-
-$path = dirname(__FILE__) . '/library';
-set_include_path(get_include_path() . PATH_SEPARATOR . $path);
+$plugin->dependencies = array(
+    'local_warpwire' => 2022081800
+);

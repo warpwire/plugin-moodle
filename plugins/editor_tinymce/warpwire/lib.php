@@ -23,20 +23,26 @@ class tinymce_warpwire extends editor_tinymce_plugin
 
     protected function update_init_params(array &$params, context $context,
         array $options = null) {
-        global $CFG, $COURSE;        
+        global $CFG, $COURSE;
 
         $filters = filter_get_active_in_context($context);
         $enabled  = array_key_exists('warpwire', $filters) || array_key_exists('filter/warpwire', $filters);
 
         // If warpwire filter is disabled, do not add button.
-        if (!$enabled) {
+        if (!$enabled || !\local_warpwire\utilities::isConfigured()) {
             return;
         }
 
         // build the query params to pass
         $url_params_query = http_build_query(array('mode' => 'plugin'), '', '&');
 
-        $url_parts = parse_url(get_config('local_warpwire', 'warpwire_lti') . '?' . $url_params_query);
+        $warpwireUrl = get_config('local_warpwire', 'warpwire_url');
+        if (empty($warpwireUrl)) {
+            return array('warpwire_url' => $CFG->wwwroot . '/local/warpwire/html/setup.html');
+        }
+
+        $warpwireUrl = \rtrim($warpwireUrl, '/') . '/api/lti/';
+        $url_parts = parse_url($warpwireUrl . '?' . $url_params_query);
 
         $parameters = array();
         if(!empty($url_parts['query']))
