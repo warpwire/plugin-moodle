@@ -145,6 +145,12 @@ class utilities {
         return $result;
     }
 
+    public static function canStartTrial() {
+        global $CFG;
+
+        return !empty($CFG->warpwireWebhookUrl) && !empty($CFG->warpwireWebhookAuthKey) && !empty($CFG->warpwireWebhookAuthSecret);
+    }
+
     public static function isConfigured() {
         $allConfig = (array)get_config('local_warpwire');
         return !empty($allConfig['warpwire_url']) &&

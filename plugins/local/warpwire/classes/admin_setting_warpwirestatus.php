@@ -52,7 +52,7 @@ class admin_setting_warpwirestatus extends \admin_setting {
     }
 
     public function output_html($data, $query='') {
-        global $OUTPUT;
+        global $OUTPUT, $CFG;
 
         $html = '';
 
@@ -131,22 +131,26 @@ class admin_setting_warpwirestatus extends \admin_setting {
             $clientIdentifier = explode('.', parse_url($baseUrl, PHP_URL_HOST))[0];
 
             $html .= \html_writer::tag('p', get_string('notice_client_identifier', 'local_warpwire', $clientIdentifier));
-        } elseif (!empty($status = get_config('local_warpwire', 'setup_status'))) {
-            $html .= \html_writer::script('', new \moodle_url('/local/warpwire/checkstatus.js'));
-            $html .= \html_writer::tag('p', 'Creating a new site may take several minutes. You may leave and return to this page at any time.');
-            if (!in_array(strtolower($status), ['queued', 'notstarted', 'processing', 'unknown'])) {
-                $html .= \html_writer::tag('p', ucfirst(strtolower($status)) . ': ' . get_config('local_warpwire', 'setup_status_message'));
-                $html .= $this->createStartTrialButton();
+        } elseif (\local_warpwire\utilities::canStartTrial()) {
+            if (!empty($status = get_config('local_warpwire', 'setup_status'))) {
+                $html .= \html_writer::script('', new \moodle_url('/local/warpwire/checkstatus.js'));
+                $html .= \html_writer::tag('p', 'Creating a new site may take several minutes. You may leave and return to this page at any time.');
+                if (!in_array(strtolower($status), ['queued', 'notstarted', 'processing', 'unknown'])) {
+                    $html .= \html_writer::tag('p', ucfirst(strtolower($status)) . ': ' . get_config('local_warpwire', 'setup_status_message'));
+                    $html .= $this->createStartTrialButton();
+                } else {
+                    $html .= \html_writer::start_tag('p');
+                    $html .= \html_writer::img($OUTPUT->image_url('y/loading'), 'OK', ['style' => 'margin-right: 5px; width: 1em; height: 1em']);
+                    $html .= \html_writer::tag('span', 'Checking status...', ['id' => 'warpwire_status_container']);
+                    $html .= \html_writer::end_tag('p');
+                    $html .= $this->createStartTrialButton(['id' => 'warpwire_trial_button', 'style' => 'display: none']);
+                }
             } else {
-                $html .= \html_writer::start_tag('p');
-                $html .= \html_writer::img($OUTPUT->image_url('y/loading'), 'OK', ['style' => 'margin-right: 5px; width: 1em; height: 1em']);
-                $html .= \html_writer::tag('span', 'Checking status...', ['id' => 'warpwire_status_container']);
-                $html .= \html_writer::end_tag('p');
-                $html .= $this->createStartTrialButton(['id' => 'warpwire_trial_button', 'style' => 'display: none']);
+                $html .= \html_writer::tag('p', get_string('notice_getting_started', 'local_warpwire'));
+                $html .= $this->createStartTrialButton();
             }
         } else {
-            $html .= \html_writer::tag('p', get_string('notice_getting_started', 'local_warpwire'));
-            $html .= $this->createStartTrialButton();
+            $html .= \html_writer::tag('p', get_string('notice_getting_started_no_trial', 'local_warpwire'));
         }
 
         return highlight($query, $html);

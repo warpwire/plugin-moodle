@@ -27,11 +27,14 @@ if (!confirm_sesskey()) {
 
 $action = optional_param('action', false, PARAM_TEXT);
 $isConfigured = \local_warpwire\utilities::isConfigured();
+$canStartTrial = \local_warpwire\utilities::canStartTrial();
 
 switch($action) {
     case 'setup':
         if ($isConfigured) {
             redirectAndExit(get_string('notice_already_configured', 'local_warpwire'));
+        } elseif (!$canStartTrial) {
+            redirectAndExit(get_string('notice_cannot_start_trial', 'local_warpwire'));
         }
 
         resetConfiguration();
@@ -58,9 +61,9 @@ function setupTrial() {
     global $CFG;
 
     try {
-        $webhookUrl = 'https://bootstrap.warpwire.com/webhook/client-moodleus/';
-        $webhookAuthKey = 'Na9Ito3zjZu2rwi8';
-        $webhookAuthSecret = 'ADpZvv19j5ga6RO4o37L4f2CCDA6QyU11YQxx3UdETpj3tbW5c5u56rEebfbahy4';
+        $warpwireWebhookUrl = $CFG->warpwireWebhookUrl;
+        $warpwireWebhookAuthKey = $CFG->warpwireWebhookAuthKey;
+        $warpwireWebhookAuthSecret = $CFG->warpwireWebhookAuthSecret;
 
         $domain = parse_url($CFG->wwwroot, PHP_URL_HOST);
 
@@ -78,7 +81,7 @@ function setupTrial() {
 
         \local_warpwire\utilities::errorLogLong($payload, 'WARPWIRE TRIAL SETUP');
 
-        $decoded = \local_warpwire\utilities::makePostRequest($webhookUrl, $payload, $webhookAuthKey, $webhookAuthSecret);
+        $decoded = \local_warpwire\utilities::makePostRequest($warpwireWebhookUrl, $payload, $warpwireWebhookAuthKey, $warpwireWebhookAuthSecret);
     } catch(\Exception $ex) {
         \local_warpwire\utilities::errorLogLong((string)$ex, 'WARPWIRE TRIAL SETUP');
 
