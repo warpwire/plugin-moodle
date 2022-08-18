@@ -14,18 +14,16 @@ be in the **Assets** section.
 ## Configure
 1. Navigate to **Site Administration**, click the **Plugins** tab, and in the **Filters** section, click the **Manage Filters** link.
 
-![Moodle: Plugins](https://github.com/warpwire/warpwire-moodle-3/blob/master/moodle-plugins.png)
+![Moodle: Plugins: Filters](https://github.com/warpwire/plugin-moodle/blob/master/moodle-administration-categories.png)
 
-![Moodle: Plugins: Filters](https://github.com/warpwire/warpwire-moodle-3/blob/master/moodle-plugin-filters.png)
-
-![Moodle: Plugins: Filters: Manage Filters](https://github.com/warpwire/warpwire-moodle-3/blob/master/moodle-manage-filters.png)
+![Moodle: Plugins: Filters: Manage Filters](https://github.com/warpwire/plugin-moodle/blob/master/moodle-administration-filters.png)
 
 2. Ensure that the 'Warpwire filter' has the 'Active?' setting selected to 'On', and the 'Apply to' setting is set to 'Content'.
 3. Navigate to **Site Administration**, click the **Plugins** tab, and in the **Local plugins** section, click the **Warpwire Plugin Configuration** link.
 
-![Moodle: Local Plugins](https://github.com/warpwire/warpwire-moodle-3/blob/master/moodle-local-plugins.png)
+![Moodle: Local Plugins](https://github.com/warpwire/plugin-moodle/blob/master/moodle-administration-local-plugins.png)
 
-![Moodle: Warpwire Plugin Configuration](https://github.com/warpwire/warpwire-moodle-3/blob/master/moodle-ww-config.png)
+![Moodle: Warpwire Plugin Configuration](https://github.com/warpwire/plugin-moodle/blob/master/moodle-administration-warpwire.png)
 
 4. Fill in the values for 'Your Warpwire LTI Launch URL', 'Your Warpwire Consumer Key', and 'Your Warpwire Consumer Secret'.
    ***Note:*** Please contact Warpwire at tech@warpwire.net to request a consumer key and secret for your Warpwire installation.
