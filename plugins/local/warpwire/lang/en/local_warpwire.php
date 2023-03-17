@@ -68,8 +68,8 @@ $string['notice_setup_success'] = 'Setup request has been sent.';
 
 $string['notice_client_identifier'] = 'Account ID: <b>{$a}</b>';
 $string['notice_account_type'] = 'Account Type: <b>{$a}</b>';
-$string['notice_usage_limits_trial'] = 'During your trial, you may only upload a small amount of content. If you\'d like to upgrade to a full version, please contact Moodle.us support.';
-$string['notice_usage_limits'] = 'Warpwire limits the amount of content that may be added or viewed before purchasing more. If you wish to upgrade, please contact Moodle.us support.';
+$string['notice_usage_limits_trial'] = 'During your trial, you may only upload a small amount of content. If you\'d like to upgrade to a full version, please contact support.';
+$string['notice_usage_limits'] = 'Warpwire limits the amount of content that may be added or viewed before purchasing more. If you wish to upgrade, please contact support.';
 $string['notice_error_usage'] = 'Unable to retrieve usage information.';
 $string['notice_getting_started'] = 'Your site is not configured to use Warpwire. If you have a Warpwire site already, you must enter the credentials in the settings area below. If you do not have a Warpwire site, you may start a trial by clicking "Start Trial". This will create a new Warpwire site and configure your Moodle site automatically.';
 $string['notice_getting_started_no_trial'] = 'Your site is not configured to use Warpwire. If you have a Warpwire site already, you must enter the credentials in the settings area below.';
