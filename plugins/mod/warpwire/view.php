@@ -31,9 +31,9 @@ $w  = optional_param('w', 0, PARAM_INT);  // Warpwire instance ID
 if ($id) {
     $cm         = get_coursemodule_from_id('warpwire', $id, 0, false, MUST_EXIST);
     $course     = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
-    $warpwire  = $DB->get_record('warpwire', array('id' => $cm->instance), '*', MUST_EXIST);
+    $warpwire   = $DB->get_record('warpwire', array('id' => $cm->instance), '*', MUST_EXIST);
 } else if ($w) {
-    $warpwire  = $DB->get_record('warpwire', array('id' => $w), '*', MUST_EXIST);
+    $warpwire   = $DB->get_record('warpwire', array('id' => $w), '*', MUST_EXIST);
     $course     = $DB->get_record('course', array('id' => $warpwire->course), '*', MUST_EXIST);
     $cm         = get_coursemodule_from_instance('warpwire', $warpwire->id, $course->id, false, MUST_EXIST);
 } else {
@@ -59,31 +59,30 @@ $PAGE->set_heading(format_string($course->fullname));
 // Output starts here.
 echo $OUTPUT->header();
 
-$url = get_config('local_warpwire', 'warpwire_lti');
-if (! empty($url)) {
-    $url_parts = parse_url($url);
-
-    $parameters = array();
-    if(!empty($url_parts['query'])) {
-        parse_str($url_parts['query'], $parameters);
-    }
-    
-    $url_parts['query'] = http_build_query($parameters, '', '&');
-    
-    $url = $url_parts['scheme'].'://'.$url_parts['host'].$url_parts['path'].'?'.$url_parts['query'];
-    
-    $parts = array(
-        'url' => $url,
-        'course_id' => $course->id
-    );
-    
-    $partsString = http_build_query($parts, '', '&');
-    
-    $pageUrl = $CFG->wwwroot . '/local/warpwire/?' .$partsString;
-} else {
+$warpwireUrl = get_config('local_warpwire', 'warpwire_url');
+if (empty($warpwireUrl)) {
     $pageUrl = $CFG->wwwroot . '/local/warpwire/html/setup.html';
-}
+} else {
+    $url_parts = parse_url($warpwireUrl);
 
+$parameters = array();
+    if (!empty($url_parts['query'])) {
+    parse_str($url_parts['query'], $parameters);
+    }
+
+$url_parts['query'] = http_build_query($parameters, '', '&');
+
+    $url = $url_parts['scheme'] . '://' . $url_parts['host'] . $url_parts['path'] . '?' . $url_parts['query'];
+
+$parts = array(
+    'url' => $url,
+    'course_id' => $course->id
+);
+
+$partsString = http_build_query($parts, '', '&');
+
+    $pageUrl = $CFG->wwwroot . '/local/warpwire/?' .$partsString;
+}
 
 $content = '<iframe 
 		id="contentframe" height="600" width="100%" 
