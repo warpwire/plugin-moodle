@@ -16,23 +16,26 @@
 
 namespace local_warpwire;
 
+defined('MOODLE_INTERNAL') || die();
+
 require_once($CFG->dirroot.'/mod/lti/lib.php');
 require_once($CFG->dirroot.'/mod/lti/locallib.php');
 
 class utilities {
-    public static function errorLogLong($message, $prefix) {
+
+    public static function error_log_long($message, $prefix) {
         if (!is_string($message)) {
             $message = json_encode($message, \JSON_PRETTY_PRINT);
         }
 
         foreach (explode("\n", $message) as $line) {
-            foreach( str_split($line, 100) as $chunk) {
+            foreach (str_split($line, 100) as $chunk) {
                 error_log('[' . $prefix . '] ' . $chunk);
             }
         }
     }
 
-    public static function stdoutLogLong($message, $prefix) {
+    public static function stdout_log_long($message, $prefix) {
         if (!is_string($message)) {
             $message = json_encode($message, \JSON_PRETTY_PRINT);
         }
@@ -45,19 +48,19 @@ class utilities {
         }
     }
 
-    public static function logLong($message, $prefix, $useStdout) {
+    public static function log_long($message, $prefix, $useStdout) {
         if ($useStdout) {
-            self::stdoutLogLong($message, $prefix);
+            self::stdout_log_long($message, $prefix);
         } else {
-            self::errorLogLong($message, $prefix);
+            self::error_log_long($message, $prefix);
         }
     }
 
-    public static function makeGetRequest($url, $token = null, $useStdout = false) {
+    public static function make_get_request($url, $token = null, $useStdout = false) {
         $ch = curl_init($url);
         curl_setopt($ch, \CURLOPT_RETURNTRANSFER, 1);
 
-        self::logLong('GET ' . $url, 'WARPWIRE', $useStdout);
+        self::log_long('GET ' . $url, 'WARPWIRE', $useStdout);
 
         if ($token !== null) {
             curl_setopt($ch, \CURLOPT_HTTPHEADER, ['x-auth-wwtoken: ' . $token]);
@@ -80,7 +83,7 @@ class utilities {
         return $decoded;
     }
 
-    public static function makePostRequest($url, $body, $authUser = '', $authPassword = '', $useStdout = false) {
+    public static function make_post_request($url, $body, $authUser = '', $authPassword = '', $useStdout = false) {
         $headers = [
             'Content-Type: application/json'
         ];
@@ -99,7 +102,7 @@ class utilities {
         ]);
         curl_setopt($ch, \CURLOPT_RETURNTRANSFER, 1);
 
-        self::logLong('POST ' . $url, 'WARPWIRE', $useStdout);
+        self::log_long('POST ' . $url, 'WARPWIRE', $useStdout);
 
         $result = curl_exec($ch);
         $responseCode = intval(\curl_getinfo($ch, \CURLINFO_RESPONSE_CODE));
@@ -118,8 +121,8 @@ class utilities {
         return $decoded;
     }
 
-    public static function makeAuthenticatedGetRequest($url, $useStdout = false) {
-        if (!self::isFullConfigured()) {
+    public static function make_authenticated_get_request($url, $useStdout = false) {
+        if (!self::is_full_configured()) {
             throw new \Exception('Site is not configured to connect to Warpwire');
         }
 
@@ -130,13 +133,13 @@ class utilities {
         }
 
         try {
-            $result = self::makeGetRequest($url, $authToken, $useStdout);
+            $result = self::make_get_request($url, $authToken, $useStdout);
         } catch(\Exception $ex) {
             if ($ex->getCode() === 401) {
                 $authToken = self::authorize();
                 set_config('warpwire_auth_token', $authToken, 'local_warpwire');
 
-                $result = self::makeGetRequest($url, $authToken, $useStdout);
+                $result = self::make_get_request($url, $authToken, $useStdout);
             } else {
                 throw $ex;
             }
@@ -145,20 +148,20 @@ class utilities {
         return $result;
     }
 
-    public static function canStartTrial() {
+    public static function can_start_trial() {
         global $CFG;
 
         return !empty($CFG->warpwireWebhookUrl) && !empty($CFG->warpwireWebhookAuthKey) && !empty($CFG->warpwireWebhookAuthSecret);
     }
 
-    public static function isConfigured() {
+    public static function is_configured() {
         $allConfig = (array)get_config('local_warpwire');
         return !empty($allConfig['warpwire_url']) &&
                !empty($allConfig['warpwire_key']) &&
                !empty($allConfig['warpwire_secret']);
     }
 
-    public static function isFullConfigured() {
+    public static function is_full_configured() {
         $allConfig = (array)get_config('local_warpwire');
         return !empty($allConfig['warpwire_url']) &&
                !empty($allConfig['warpwire_key']) &&
@@ -173,15 +176,15 @@ class utilities {
         add_to_config_log($name, $oldValue, $value, 'local_warpwire');
     }
 
-    public static function setupLtiTool($enabled, $useStdout = false) {
+    public static function setupLtiTool($enabled, $usestdout = false) {
         global $CFG;
 
         try {
-            $existingLtiIds = [];
-            $existingTypes = \lti_get_lti_types();
-            foreach ($existingTypes as $existingType) {
+            $existingltiids = [];
+            $existingtypes = \lti_get_lti_types();
+            foreach ($existingtypes as $existingType) {
                 if ($existingType->name === 'Warpwire Graded Activity') {
-                    $existingLtiIds[] = $existingType->id;
+                    $existingltiids[] = $existingType->id;
                 }
             }
 
@@ -223,9 +226,9 @@ class utilities {
                 'course' => 1
             ];
 
-            if (!empty($existingLtiIds)) {
-                foreach ($existingLtiIds as $existingLtiId) {
-                    \local_warpwire\utilities::logLong('Updating existing Warpwire LTI type (id: ' . $existingLtiId . ')', 'WARPWIRE LTI', $useStdout);
+            if (!empty($existingltiids)) {
+                foreach ($existingltiids as $existingLtiId) {
+                    \local_warpwire\utilities::log_long('Updating existing Warpwire LTI type (id: ' . $existingLtiId . ')', 'WARPWIRE LTI', $usestdout);
                     $type = new \stdClass();
                     $type->state = \LTI_TOOL_STATE_CONFIGURED;
                     $type->id = $existingLtiId;
@@ -233,14 +236,14 @@ class utilities {
                     \lti_update_type($type, $data);
                 }
             } else {
-                \local_warpwire\utilities::logLong('Creating new Warpwire LTI type', 'WARPWIRE LTI', $useStdout);
+                \local_warpwire\utilities::log_long('Creating new Warpwire LTI type', 'WARPWIRE LTI', $usestdout);
                 $type = new \stdClass();
                 $type->state = \LTI_TOOL_STATE_CONFIGURED;
                 \lti_load_type_if_cartridge($data);
                 \lti_add_type($type, $data);
             }
         } catch(\Throwable $ex) {
-            \local_warpwire\utilities::logLong('Failed to configure LTI tool: ' . $ex, 'WARPWIRE LTI', $useStdout);
+            \local_warpwire\utilities::log_long('Failed to configure LTI tool: ' . $ex, 'WARPWIRE LTI', $usestdout);
         }
     }
 
@@ -251,16 +254,16 @@ class utilities {
             foreach ($existingTypes as $existingType) {
                 if ($existingType->name === 'Warpwire Graded Activity') {
                     $existingLtiId = $existingType->id;
-                    \local_warpwire\utilities::logLong('Removing Warpwire LTI type with id ' . $existingLtiId, 'WARPWIRE LTI', $useStdout);
+                    \local_warpwire\utilities::log_long('Removing Warpwire LTI type with id ' . $existingLtiId, 'WARPWIRE LTI', $useStdout);
                     \lti_delete_type($existingLtiId);
                 }
             }
 
             if ($existingLtiId === null) {
-                \local_warpwire\utilities::logLong('No LTI tool to remove', 'WARPWIRE LTI', $useStdout);
+                \local_warpwire\utilities::log_long('No LTI tool to remove', 'WARPWIRE LTI', $useStdout);
             }
         } catch(\Throwable $ex) {
-            \local_warpwire\utilities::logLong('Failed to remove LTI tool: ' . $ex, 'WARPWIRE LTI', $useStdout);
+            \local_warpwire\utilities::log_long('Failed to remove LTI tool: ' . $ex, 'WARPWIRE LTI', $useStdout);
         }
     }
 
@@ -269,7 +272,7 @@ class utilities {
         $adminUsername = get_config('local_warpwire', 'warpwire_admin_username');
         $adminPassword = get_config('local_warpwire', 'warpwire_admin_password');
 
-        $auth = self::makePostRequest("{$baseUrl}api/authenticate/", [], $adminUsername, $adminPassword);
+        $auth = self::make_post_request("{$baseUrl}api/authenticate/", [], $adminUsername, $adminPassword);
         if (!is_array($auth) || !isset($auth['token'])) {
             throw new \Exception('Could not retrieve auth token');
         }
