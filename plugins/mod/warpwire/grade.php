@@ -24,6 +24,7 @@
  */
 
 require_once(__DIR__ . "../../../config.php");
+require_login();
 
 $id = required_param('id', PARAM_INT);// Course module ID.
 $itemnumber = optional_param('itemnumber', 0, PARAM_INT);

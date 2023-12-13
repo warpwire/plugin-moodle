@@ -24,4 +24,4 @@ $plugin->release   = '4.1.2';
 $plugin->maturity  = MATURITY_STABLE;
 $plugin->requires  = 2019111800;
 
-$plugin->dependencies  = array();
+$plugin->dependencies  = [];

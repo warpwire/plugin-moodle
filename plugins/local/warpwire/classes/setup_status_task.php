@@ -19,17 +19,17 @@ namespace local_warpwire;
 class setup_status_task extends \core\task\adhoc_task {
     public function execute() {
         $data = $this->get_custom_data();
-        $statusUrl = $data->status_url;
+        $statusurl = $data->status_url;
 
         \local_warpwire\utilities::stdoutLogLong('Starting provisioning status check...', 'WARPWIRE STATUS');
-        $startTime = \time();
-        while (time() - $startTime < 600 && $this->getStatus($statusUrl) === false) {
+        $starttime = \time();
+        while (time() - $starttime < 600 && $this->getstatus($statusurl) === false) {
             \local_warpwire\utilities::stdoutLogLong('Waiting 10 seconds...', 'WARPWIRE STATUS');
             sleep(10);
         }
 
         if (!\local_warpwire\utilities::isConfigured()) {
-            if (time() - $startTime < 600) {
+            if (time() - $starttime < 600) {
                 \local_warpwire\utilities::stdoutLogLong('Failed to configure due to error', 'WARPWIRE STATUS');
             } else {
                 \local_warpwire\utilities::stdoutLogLong('Failed to configure after 600 seconds', 'WARPWIRE STATUS');
@@ -39,9 +39,9 @@ class setup_status_task extends \core\task\adhoc_task {
         \local_warpwire\utilities::setupLtiTool(true);
     }
 
-    private function getStatus($statusUrl) {
+    private function getstatus($statusurl) {
         try {
-            $result = \local_warpwire\utilities::makeGetRequest($statusUrl, null, true);
+            $result = \local_warpwire\utilities::makeGetRequest($statusurl, null, true);
 
             \local_warpwire\utilities::stdoutLogLong($result, 'WARPWIRE STATUS');
 
@@ -49,45 +49,45 @@ class setup_status_task extends \core\task\adhoc_task {
             set_config('setup_status_message', $result['message'], 'local_warpwire');
 
             if ($result['done'] === false) {
-                // keep waiting
+                // Keep waiting.
                 return false;
             }
 
             if (strtolower($result['status']) !== 'success') {
-                // no further processing on error states
+                // No further processing on error states.
                 return true;
             }
 
-            $internalDomain = $result['internal_domain'];
-            $initialAdminCredentialsUrl = $result['initial_admin_credentials_url'];
-            $initiaLtiKeyUrl = $result['initial_lti_key_credentials_url'];
+            $internaldomain = $result['internal_domain'];
+            $initialadmincredentialsurl = $result['initial_admin_credentials_url'];
+            $initialtikeyurl = $result['initial_lti_key_credentials_url'];
 
-            if (!empty($initiaLtiKeyUrl)) {
-                $initialLtiKey = \local_warpwire\utilities::makeGetRequest($initiaLtiKeyUrl, null, true);
-                \local_warpwire\utilities::stdoutLogLong($initialLtiKey, 'WARPWIRE STATUS');
+            if (!empty($initialtikeyurl)) {
+                $initialltikey = \local_warpwire\utilities::makeGetRequest($initialtikeyurl, null, true);
+                \local_warpwire\utilities::stdoutLogLong($initialltikey, 'WARPWIRE STATUS');
             } else {
-                $initialLtiKey = [
+                $initialltikey = [
                     'key' => '',
-                    'secret' => ''
+                    'secret' => '',
                 ];
             }
 
-            if (!empty($initialAdminCredentialsUrl)) {
-                $initialAdminCredentials = \local_warpwire\utilities::makeGetRequest($initialAdminCredentialsUrl, null, true);
-                \local_warpwire\utilities::stdoutLogLong($initialAdminCredentials, 'WARPWIRE STATUS');
+            if (!empty($initialadmincredentialsurl)) {
+                $initialadmincredentials = \local_warpwire\utilities::makeGetRequest($initialadmincredentialsurl, null, true);
+                \local_warpwire\utilities::stdoutLogLong($initialadmincredentials, 'WARPWIRE STATUS');
             } else {
-                $initialAdminCredentials = [
+                $initialadmincredentials = [
                     'unique_id' => '',
-                    'password' => ''
+                    'password' => '',
                 ];
             }
 
-            \local_warpwire\utilities::setConfigLog('warpwire_url',  'https://' . $internalDomain . '/');
-            \local_warpwire\utilities::setConfigLog('warpwire_key',  $initialLtiKey['key']);
-            \local_warpwire\utilities::setConfigLog('warpwire_secret',  $initialLtiKey['secret']);
+            \local_warpwire\utilities::setConfigLog('warpwire_url',  'https://' . $internaldomain . '/');
+            \local_warpwire\utilities::setConfigLog('warpwire_key',  $initialltikey['key']);
+            \local_warpwire\utilities::setConfigLog('warpwire_secret',  $initialltikey['secret']);
 
-            \local_warpwire\utilities::setConfigLog('warpwire_admin_username',  $initialAdminCredentials['unique_id']);
-            \local_warpwire\utilities::setConfigLog('warpwire_admin_password',  $initialAdminCredentials['password']);
+            \local_warpwire\utilities::setConfigLog('warpwire_admin_username',  $initialadmincredentials['unique_id']);
+            \local_warpwire\utilities::setConfigLog('warpwire_admin_password',  $initialadmincredentials['password']);
 
             set_config('setup_status', null, 'local_warpwire');
             set_config('setup_status_message', null, 'local_warpwire');

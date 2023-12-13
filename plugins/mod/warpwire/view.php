@@ -25,16 +25,16 @@
 require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
 require_once(dirname(__FILE__).'/lib.php');
 
-$id = optional_param('id', 0, PARAM_INT); // Course_module ID, or
-$w  = optional_param('w', 0, PARAM_INT);  // Warpwire instance ID
+$id = optional_param('id', 0, PARAM_INT); // Course_module ID, or.
+$w  = optional_param('w', 0, PARAM_INT);  // Warpwire instance ID.
 
 if ($id) {
     $cm         = get_coursemodule_from_id('warpwire', $id, 0, false, MUST_EXIST);
-    $course     = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
-    $warpwire   = $DB->get_record('warpwire', array('id' => $cm->instance), '*', MUST_EXIST);
+    $course     = $DB->get_record('course', ['id' => $cm->course], '*', MUST_EXIST);
+    $warpwire   = $DB->get_record('warpwire', ['id' => $cm->instance], '*', MUST_EXIST);
 } else if ($w) {
-    $warpwire   = $DB->get_record('warpwire', array('id' => $w), '*', MUST_EXIST);
-    $course     = $DB->get_record('course', array('id' => $warpwire->course), '*', MUST_EXIST);
+    $warpwire   = $DB->get_record('warpwire', ['id' => $w], '*', MUST_EXIST);
+    $course     = $DB->get_record('course', ['id' => $warpwire->course], '*', MUST_EXIST);
     $cm         = get_coursemodule_from_instance('warpwire', $warpwire->id, $course->id, false, MUST_EXIST);
 } else {
     error('You must specify a course_module ID or an instance ID');
@@ -42,53 +42,53 @@ if ($id) {
 
 require_login($course, true, $cm);
 
-$event = \mod_warpwire\event\course_module_viewed::create(array(
+$event = \mod_warpwire\event\course_module_viewed::create([
     'objectid' => $PAGE->cm->instance,
     'context' => $PAGE->context,
-));
+]);
 $event->add_record_snapshot('course', $PAGE->course);
 $event->add_record_snapshot($PAGE->cm->modname, $warpwire);
 $event->trigger();
 
 // Print the page header.
 
-$PAGE->set_url('/mod/warpwire/view.php', array('id' => $cm->id));
+$PAGE->set_url('/mod/warpwire/view.php', ['id' => $cm->id]);
 $PAGE->set_title(format_string($warpwire->name));
 $PAGE->set_heading(format_string($course->fullname));
 
 // Output starts here.
 echo $OUTPUT->header();
 
-$warpwireUrl = get_config('local_warpwire', 'warpwire_url');
-if (empty($warpwireUrl)) {
-    $pageUrl = $CFG->wwwroot . '/local/warpwire/html/setup.html';
+$warpwireurl = get_config('local_warpwire', 'warpwire_url');
+if (empty($warpwireurl)) {
+    $pageurl = $CFG->wwwroot . '/local/warpwire/html/setup.html';
 } else {
-    $url_parts = parse_url($warpwireUrl);
+    $urlparts = parse_url($warpwireurl);
 
-$parameters = array();
-    if (!empty($url_parts['query'])) {
-    parse_str($url_parts['query'], $parameters);
+    $parameters = [];
+    if (!empty($urlparts['query'])) {
+        parse_str($urlparts['query'], $parameters);
     }
 
-$url_parts['query'] = http_build_query($parameters, '', '&');
+    $urlparts['query'] = http_build_query($parameters, '', '&');
 
-    $url = $url_parts['scheme'] . '://' . $url_parts['host'] . $url_parts['path'] . '?' . $url_parts['query'];
+    $url = $urlparts['scheme'] . '://' . $urlparts['host'] . $urlparts['path'] . '?' . $urlparts['query'];
 
-$parts = array(
+    $parts = [
     'url' => $url,
-    'course_id' => $course->id
-);
+    'course_id' => $course->id,
+    ];
 
-$partsString = http_build_query($parts, '', '&');
+    $partsstring = http_build_query($parts, '', '&');
 
-    $pageUrl = $CFG->wwwroot . '/local/warpwire/?' .$partsString;
+    $pageurl = $CFG->wwwroot . '/local/warpwire/?' .$partsstring;
 }
 
-$content = '<iframe 
-		id="contentframe" height="600" width="100%" 
-		src="'.$pageUrl.'"
-		frameborder="0" scrolling="0" 
-		allow="autoplay *; encrypted-media *; fullscreen *; camera *; microphone *;" 
+$content = '<iframe
+		id="contentframe" height="600" width="100%"
+		src="'.$pageurl.'"
+		frameborder="0" scrolling="0"
+		allow="autoplay *; encrypted-media *; fullscreen *; camera *; microphone *;"
 		title="Warpwire Media Library" allowfullscreen></iframe>';
 
 echo $content;
