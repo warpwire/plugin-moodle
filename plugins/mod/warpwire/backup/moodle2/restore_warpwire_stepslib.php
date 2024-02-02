@@ -40,7 +40,7 @@ class restore_warpwire_activity_structure_step extends restore_activity_structur
      */
     protected function define_structure() {
 
-        $paths = array();
+        $paths = [];
         $paths[] = new restore_path_element('warpwire', '/activity/warpwire');
 
         // Return the paths wrapped into standard activity structure.

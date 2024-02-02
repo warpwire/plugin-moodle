@@ -14,16 +14,14 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-defined('MOODLE_INTERNAL') || die();
-
 function xmldb_local_warpwire_upgrade($oldversion) {
     if ($oldversion < 20220712) {
         $lti = get_config('local_warpwire', 'warpwire_lti');
         $url = get_config('local_warpwire', 'warpwire_url');
 
         if (empty($url) && !empty($lti)) {
-            $newUrl = preg_replace('!/api/ltix?/$!', '/', $lti);
-            set_config('local_warpwire', $newUrl);
+            $newurl = preg_replace('!/api/ltix?/$!', '/', $lti);
+            set_config('local_warpwire', $newurl);
         }
 
         upgrade_plugin_savepoint(true, 20220712, 'local', 'warpwire');

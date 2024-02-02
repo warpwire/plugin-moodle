@@ -45,7 +45,7 @@ class mod_warpwire_mod_form extends moodleform_mod {
         $mform->addElement('header', 'general', get_string('general', 'form'));
 
         // Adding the standard "name" field.
-        $mform->addElement('text', 'name', get_string('name'), array('size' => '48'));
+        $mform->addElement('text', 'name', get_string('name'), ['size' => '48']);
         $mform->setType('name', PARAM_TEXT);
 
         // Adding the standard "intro" and "introformat" fields.

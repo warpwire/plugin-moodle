@@ -16,6 +16,8 @@
 
 namespace local_warpwire;
 
+defined('MOODLE_INTERNAL') || die();
+
 require_once("$CFG->libdir/externallib.php");
 
 class check_setup_status extends \external_api {
@@ -24,26 +26,28 @@ class check_setup_status extends \external_api {
     }
 
     public static function get_status_returns() {
-        return new \external_single_structure([
+        return new \external_single_structure(
+            [
             'status' => new \external_value(\PARAM_TEXT, 'general status'),
-            'status_message' => new \external_value(\PARAM_TEXT, 'detailed message associated with status')
-        ]);
+            'status_message' => new \external_value(\PARAM_TEXT, 'detailed message associated with status'),
+            ]
+        );
     }
 
     public static function get_status() {
-        if (\local_warpwire\utilities::isConfigured()) {
+        if (\local_warpwire\utilities::is_configured()) {
             return [
                 'status' => 'Success',
-                'status_message' => 'Setup is complete'
+                'status_message' => 'Setup is complete',
             ];
         }
 
         $status = get_config('local_warpwire', 'setup_status');
-        $statusMessage = get_config('local_warpwire', 'setup_status_message');
+        $statusmessage = get_config('local_warpwire', 'setup_status_message');
 
         return [
             'status' => empty($status) ? 'Unknown' : ucfirst(strtolower($status)),
-            'status_message' => empty($statusMessage) ? 'unknown' : $statusMessage
+            'status_message' => empty($statusmessage) ? 'unknown' : $statusmessage,
         ];
     }
 }

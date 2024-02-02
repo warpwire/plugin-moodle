@@ -14,9 +14,11 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+defined('MOODLE_INTERNAL') || die();
+
 $observers = [
     [
         'eventname' => '\core\event\config_log_created',
-        'callback' => '\local_warpwire\event_handler::on_setting_changed'
-    ]
+        'callback' => '\local_warpwire\event_handler::on_setting_changed',
+    ],
 ];

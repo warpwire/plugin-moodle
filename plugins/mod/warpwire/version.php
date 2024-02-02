@@ -31,6 +31,6 @@ $plugin->maturity  = MATURITY_STABLE;
 $plugin->requires  = 2019111800;
 $plugin->cron      = 0;
 
-$plugin->dependencies = array(
-    'local_warpwire' => 2023031700
-);
+$plugin->dependencies = [
+    'local_warpwire' => 2023031700,
+];

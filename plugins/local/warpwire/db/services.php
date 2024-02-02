@@ -16,6 +16,8 @@
 
 namespace local_warpwire;
 
+defined('MOODLE_INTERNAL') || die();
+
 $services = [
     'warpwiresetupservice' => [
         'functions' => ['local_warpwire_check_setup_status'],
@@ -24,8 +26,8 @@ $services = [
         'enabled' => 1,
         'shortname' => '',
         'downloadfils' => '',
-        'uploadfiles' => ''
-    ]
+        'uploadfiles' => '',
+    ],
 ];
 
 $functions = [
@@ -36,6 +38,6 @@ $functions = [
         'type' => 'read',
         'ajax' => true,
         'services' => [],
-        'capabilities' => ''
-    ]
+        'capabilities' => '',
+    ],
 ];
