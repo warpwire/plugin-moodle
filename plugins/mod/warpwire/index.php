@@ -48,7 +48,7 @@ $PAGE->set_pagelayout('incourse');
 echo $OUTPUT->header();
 echo $OUTPUT->heading($strname);
 
-if (! $warpwires = get_all_instances_in_course('warpwire', $course)) {
+if (!get_all_instances_in_course('warpwire', $course)) {
     notice(get_string('nowarpwires', 'warpwire'), new moodle_url('/course/view.php', ['id' => $course->id]));
 }
 

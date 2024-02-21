@@ -39,10 +39,6 @@ class backup_warpwire_activity_structure_step extends backup_activity_structure_
      * @return backup_nested_element
      */
     protected function define_structure() {
-
-        // Get know if we are including userinfo.
-        $userinfo = $this->get_setting_value('userinfo');
-
         // Define the root element describing the warpwire instance.
         $warpwire = new backup_nested_element('warpwire', ['id'], [
             'name', 'intro', 'introformat', 'grade',
