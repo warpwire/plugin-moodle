@@ -14,21 +14,17 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-defined('MOODLE_INTERNAL') || die('Invalid access');
-
-class filter_warpwire extends moodle_text_filter
-{
-    public function filter($text, array $options = array())
-    {
+class filter_warpwire extends moodle_text_filter {
+    public function filter($text, array $options = array()) {
         global $COURSE, $PAGE, $CFG, $USER;
 
-        // If upgrade is running, skip this filter. This filter relies on library functions that will throw an error if called during an upgrade.
-        if(!empty($CFG->upgraderunning)){
+        // If upgrade is running, skip this filter.
+        // This filter relies on library functions that will throw an error if called during an upgrade.
+        if (!empty($CFG->upgraderunning)) {
             return $text;
         }
 
-        // iframe template element
-        $iframe_template = '<iframe 
+        $iframetemplate = '<iframe
           width="WIDTH"
           height="HEIGHT"
           src="URL"
@@ -38,155 +34,155 @@ class filter_warpwire extends moodle_text_filter
           title="Warpwire Media"
           allowfullscreen></iframe>';
 
-        // collect information about context to send to iframe
-        $modInfo = get_fast_modinfo($COURSE);
-        $sections = $modInfo->get_section_info_all();
+        // Collect information about context to send to iframe.
+        $modinfo = get_fast_modinfo($COURSE);
+        $sections = $modinfo->get_section_info_all();
 
         // Check if this is serving data to the mobile app.
         $wstoken = null;
-        if(WS_SERVER){
+        if (WS_SERVER) {
             require_once($CFG->dirroot . '/admin/tool/mobile/lib.php');
             $wstoken = tool_mobile_get_token($USER->id);
         }
 
-        // match all warpwire shortcode instances returned from plugins
-        if (preg_match_all('/<img.*?>/is', $text, $matches_code)) {
-            foreach ($matches_code[0] as $ci => $code) {
-                $textToReplace = $code;
+        // Match all warpwire shortcode instances returned from plugins.
+        if (preg_match_all('/<img.*?>/is', $text, $matchescode)) {
+            foreach ($matchescode[0] as $ci => $code) {
+                $texttoreplace = $code;
 
-                if (preg_match('/\[warpwire:(.*)?\]/is', urldecode($code), $matches_string)) {
-                    $url = htmlspecialchars_decode($matches_string[1]);
+                if (preg_match('/\[warpwire:(.*)?\]/is', urldecode($code), $matchesstring)) {
+                    $url = htmlspecialchars_decode($matchesstring[1]);
 
-                    $currentSectionId = null;
+                    $currentsectionid = null;
                     foreach ($sections as $section) {
-                        $sectionContent = $section->summary;
-                        if (strstr($sectionContent, urlencode($url)) !== false) {
-                            $currentSectionId = $section->id;
+                        $sectioncontent = $section->summary;
+                        if (strstr($sectioncontent, urlencode($url)) !== false) {
+                            $currentsectionid = $section->id;
                             break;
                         }
                     }
 
-                    // default width and height values for iframe
-                    $iframe_width = 480;
-                    $iframe_height = 360;
+                    // Default width and height values for iframe.
+                    $iframewidth = 480;
+                    $iframeheight = 360;
 
-                    $url_parts = parse_url($url);
+                    $urlparts = parse_url($url);
 
                     $parameters = array();
-                    if (!empty($url_parts['query'])) {
-                        parse_str($url_parts['query'], $parameters);
+                    if (!empty($urlparts['query'])) {
+                        parse_str($urlparts['query'], $parameters);
                     }
 
-                    $url_parts['query'] = http_build_query($parameters, '', '&');
+                    $urlparts['query'] = http_build_query($parameters, '', '&');
 
-                    $url = $url_parts['scheme'].'://'.$url_parts['host'].$url_parts['path'].'?'.$url_parts['query'];
+                    $url = $urlparts['scheme'].'://'.$urlparts['host'].$urlparts['path'].'?'.$urlparts['query'];
 
                     $parts = array(
                         'url' => $url,
                         'course_id' => $COURSE->id,
                         'module_id' => isset($PAGE->cm->id) ? $PAGE->cm->id : '',
-                        'section_id' => $currentSectionId
+                        'section_id' => $currentsectionid
                     );
 
                     // Append wstoken if defined.
-                    if(!empty($wstoken)){
+                    if (!empty($wstoken)) {
                         $parts['wstoken'] = $wstoken->token;
                     }
 
-                    $partsString = http_build_query($parts, '', '&');
+                    $partsstring = http_build_query($parts, '', '&');
 
-                    // TODO: edit here
+                    // TODO: edit here.
 
-                    $url = $CFG->wwwroot . '/local/warpwire/?' .$partsString;
+                    $url = $CFG->wwwroot . '/local/warpwire/?' .$partsstring;
 
                     if (!empty($parameters['width'])) {
-                        $iframe_width = $parameters['width'];
+                        $iframewidth = $parameters['width'];
                     }
                     if (!empty($parameters['height'])) {
-                        $iframe_height = $parameters['height'];
+                        $iframeheight = $parameters['height'];
                     }
 
                     if (class_exists('DOMDocument')) {
                         $doc = new DOMDocument();
                         $doc->loadHTML($code);
-                        $imageTags = $doc->getElementsByTagName('img');
+                        $imagetags = $doc->getElementsByTagName('img');
 
-                        foreach ($imageTags as $tag) {
-                            $iframe_width = $tag->getAttribute('width');
-                            $iframe_height = $tag->getAttribute('height');
+                        foreach ($imagetags as $tag) {
+                            $iframewidth = $tag->getAttribute('width');
+                            $iframeheight = $tag->getAttribute('height');
                         }
                     }
             
                     $patterns = array('/URL/', '/WIDTH/', '/HEIGHT/');
-                    $replace = array($url, $iframe_width, $iframe_height);
-                    $iframe_html = preg_replace($patterns, $replace, $iframe_template);
+                    $replace = array($url, $iframewidth, $iframeheight);
+                    $iframehtml = preg_replace($patterns, $replace, $iframetemplate);
 
-                    // replace the shortcode with the iframe html
-                    $text = str_replace($textToReplace, $iframe_html, $text);
+                    // Replace the shortcode with the iframe html.
+                    $text = str_replace($texttoreplace, $iframehtml, $text);
                 }
             }
         }
 
-        // match all warpwire shortcode instances manually inserted
-        if (preg_match_all('/\[warpwire(\:(.+))?( .+)?\](.+)?\/a>/isU', $text, $matches_code)) {
-            foreach ($matches_code[0] as $index => $code) {
-                $textToReplace = $matches_code[0][$index];
+        // Match all warpwire shortcode instances manually inserted.
+        if (preg_match_all('/\[warpwire(\:(.+))?( .+)?\](.+)?\/a>/isU', $text, $matchescode)) {
+            foreach ($matchescode[0] as $index => $code) {
+                $texttoreplace = $matchescode[0][$index];
 
                 $url = '';
-                if (!empty($matches_code[3][$index])) {
-                    $url = preg_replace('/^ href=("|\')/', '', $matches_code[3][$index]);
+                if (!empty($matchescode[3][$index])) {
+                    $url = preg_replace('/^ href=("|\')/', '', $matchescode[3][$index]);
                 }
 
                 $url = htmlspecialchars_decode($url);
 
-                $currentSectionId = null;
+                $currentsectionid = null;
                 foreach ($sections as $section) {
-                    $sectionContent = $section->summary;
-                    if (strstr($sectionContent, urlencode($url)) !== false) {
-                        $currentSectionId = $section->id;
+                    $sectioncontent = $section->summary;
+                    if (strstr($sectioncontent, urlencode($url)) !== false) {
+                        $currentsectionid = $section->id;
                         break;
                     }
                 }
 
-                // default width and height values for iframe
-                $iframe_width = 480;
-                $iframe_height = 360;
+                // Default width and height values for iframe.
+                $iframewidth = 480;
+                $iframeheight = 360;
 
-                $url_parts['query'] = http_build_query($parameters, '', '&');
+                $urlparts['query'] = http_build_query($parameters, '', '&');
 
-                $url = $url_parts['scheme'].'://'.$url_parts['host'].$url_parts['path'].'?'.$url_parts['query'];
+                $url = $urlparts['scheme'].'://'.$urlparts['host'].$urlparts['path'].'?'.$urlparts['query'];
 
                 $parts = array(
                     'url' => $url,
                     'course_id' => $COURSE->id,
                     'module_id' => isset($PAGE->cm->id) ? $PAGE->cm->id : '',
-                    'section_id' => $currentSectionId
+                    'section_id' => $currentsectionid
                 );
 
                 // Append wstoken if defined.
-                if(!empty($wstoken)){
+                if (!empty($wstoken)) {
                     $parts['wstoken'] = $wstoken->token;
                 }
 
-                $partsString = http_build_query($parts, '', '&');
+                $partsstring = http_build_query($parts, '', '&');
 
-                // TODO: edit here
+                // TODO: edit here.
 
-                $url = $CFG->wwwroot . '/local/warpwire/?' .$partsString;
+                $url = $CFG->wwwroot . '/local/warpwire/?' .$partsstring;
 
                 if (!empty($parameters['width'])) {
-                    $iframe_width = $parameters['width'];
+                    $iframewidth = $parameters['width'];
                 }
                 if (!empty($parameters['height'])) {
-                    $iframe_height = $parameters['height'];
+                    $iframeheight = $parameters['height'];
                 }
 
                 $patterns = array('/URL/', '/WIDTH/', '/HEIGHT/');
-                $replace = array($url, $iframe_width, $iframe_height);
-                $iframe_html = preg_replace($patterns, $replace, $iframe_template);
+                $replace = array($url, $iframewidth, $iframeheight);
+                $iframehtml = preg_replace($patterns, $replace, $iframetemplate);
 
-                // replace the shortcode with the iframe html
-                $text = str_replace($textToReplace, $iframe_html, $text);
+                // Replace the shortcode with the iframe html.
+                $text = str_replace($texttoreplace, $iframehtml, $text);
             }
         }
 
