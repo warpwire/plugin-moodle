@@ -29,7 +29,7 @@ class tinymce_warpwire extends editor_tinymce_plugin
         $enabled  = array_key_exists('warpwire', $filters) || array_key_exists('filter/warpwire', $filters);
 
         // If warpwire filter is disabled, do not add button.
-        if (!$enabled || !\local_warpwire\utilities::isConfigured()) {
+        if (!$enabled || !\local_warpwire\utilities::is_configured()) {
             return;
         }
 

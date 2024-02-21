@@ -26,8 +26,8 @@ if (!confirm_sesskey()) {
 }
 
 $action = optional_param('action', false, PARAM_TEXT);
-$isconfigured = \local_warpwire\utilities::isConfigured();
-$canstarttrial = \local_warpwire\utilities::canStartTrial();
+$isconfigured = \local_warpwire\utilities::is_configured();
+$canstarttrial = \local_warpwire\utilities::can_start_trial();
 
 switch($action) {
     case 'setup':
@@ -49,11 +49,11 @@ function resetconfiguration() {
     // Reset all configuration to make sure we have a clean slate.
     set_config('setup_status', null, 'local_warpwire');
     set_config('setup_status_message', null, 'local_warpwire');
-    \local_warpwire\utilities::setConfigLog('warpwire_url', null);
-    \local_warpwire\utilities::setConfigLog('warpwire_key', null);
-    \local_warpwire\utilities::setConfigLog('warpwire_secret', null);
-    \local_warpwire\utilities::setConfigLog('warpwire_admin_username', null);
-    \local_warpwire\utilities::setConfigLog('warpwire_admin_password', null);
+    \local_warpwire\utilities::setconfiglog('warpwire_url', null);
+    \local_warpwire\utilities::setconfiglog('warpwire_key', null);
+    \local_warpwire\utilities::setconfiglog('warpwire_secret', null);
+    \local_warpwire\utilities::setconfiglog('warpwire_admin_username', null);
+    \local_warpwire\utilities::setconfiglog('warpwire_admin_password', null);
     set_config('warpwire_auth_token', null);
 }
 
@@ -79,12 +79,12 @@ function setuptrial() {
             'dry_run' => false,
         ];
 
-        \local_warpwire\utilities::errorLogLong($payload, 'WARPWIRE TRIAL SETUP');
+        \local_warpwire\utilities::error_log_long($payload, 'WARPWIRE TRIAL SETUP');
 
-        $decoded = \local_warpwire\utilities::makePostRequest($warpwirewebhookurl, $payload,
+        $decoded = \local_warpwire\utilities::make_post_request($warpwirewebhookurl, $payload,
         $warpwirewebhookauthkey, $warpwirewebhookauthsecret);
     } catch (\Exception $ex) {
-        \local_warpwire\utilities::errorLogLong((string)$ex, 'WARPWIRE TRIAL SETUP');
+        \local_warpwire\utilities::error_log_long((string)$ex, 'WARPWIRE TRIAL SETUP');
 
         set_config('setup_status', 'error', 'local_warpwire');
 
@@ -107,9 +107,9 @@ function setuptrial() {
         set_config('setup_status', 'queued', 'local_warpwire');
         set_config('setup_status_message', get_string('notice_setup_success', 'local_warpwire'), 'local_warpwire');
 
-        \local_warpwire\utilities::errorLogLong('Task queued with ID: ' . $result, 'WARPWIRE TRIAL SETUP');
+        \local_warpwire\utilities::error_log_long('Task queued with ID: ' . $result, 'WARPWIRE TRIAL SETUP');
     } catch (\Exception $ex) {
-        \local_warpwire\utilities::errorLogLong((string)$ex, 'WARPWIRE TRIAL SETUP');
+        \local_warpwire\utilities::error_log_long((string)$ex, 'WARPWIRE TRIAL SETUP');
 
         set_config('setup_status', 'error', 'local_warpwire');
         set_config('setup_status_message', get_string('notice_setup_error_noretry', 'local_warpwire'), 'local_warpwire');

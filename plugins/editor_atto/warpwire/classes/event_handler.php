@@ -22,12 +22,12 @@ class event_handler {
             return;
         }
 
-        if (\local_warpwire\utilities::isConfigured()) {
-            \local_warpwire\utilities::errorLogLong('Warpwire plugin is configured. Setting up Atto toolbar.', 'WARPWIRE ATTO');
+        if (\local_warpwire\utilities::is_configured()) {
+            \local_warpwire\utilities::error_log_long('Warpwire plugin is configured. Setting up Atto toolbar.', 'WARPWIRE ATTO');
 
             self::installToolbarButton();
         } else {
-            \local_warpwire\utilities::errorLogLong('Warpwire plugin is not configured. Disabling Atto toolbar.', 'WARPWIRE ATTO');
+            \local_warpwire\utilities::error_log_long('Warpwire plugin is not configured. Disabling Atto toolbar.', 'WARPWIRE ATTO');
 
             self::removeToolbarButton();;
         }
