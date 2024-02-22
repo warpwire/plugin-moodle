@@ -15,23 +15,23 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 namespace local_warpwire;
+use core_external\external_api;
+use core_external\external_single_structure;
+use core_external\external_function_parameters;
+use core_external\external_value;
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once("$CFG->libdir/externallib.php");
-
-class check_setup_status extends \external_api {
+class check_setup_status extends external_api {
     public static function get_status_parameters() {
-        return new \external_function_parameters([]);
+        return new external_function_parameters([]);
     }
 
     public static function get_status_returns() {
-        return new \external_single_structure(
-            [
-            'status' => new \external_value(\PARAM_TEXT, 'general status'),
-            'status_message' => new \external_value(\PARAM_TEXT, 'detailed message associated with status'),
-            ]
-        );
+        return new external_single_structure([
+            'status' => new external_value(\PARAM_TEXT, 'general status'),
+            'status_message' => new external_value(\PARAM_TEXT, 'detailed message associated with status'),
+        ]);
     }
 
     public static function get_status() {
