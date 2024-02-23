@@ -23,6 +23,12 @@
  */
 
 /**
+ * Initialise the js strings required for this plugin
+ */
+
+defined('MOODLE_INTERNAL') || die('Invalid access');
+
+/**
  * Sends parameters to the JS module.
  *
  * @return array
