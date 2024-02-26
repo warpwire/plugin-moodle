@@ -53,7 +53,7 @@ class filter_warpwire extends moodle_text_filter {
                 $texttoreplace = $code;
 
                 if (preg_match('/\[warpwire:(.*)?\]/is', urldecode($code), $matchesstring)) {
-                    $url = htmlspecialchars_decode($matchesstring[1], ENT_QUOTES | ENT_SUBSTITUTE);
+                    $url = htmlspecialchars_decode($matchesstring[1], ENT_COMPAT);
 
                     $currentsectionid = null;
                     foreach ($sections as $section) {
@@ -135,7 +135,7 @@ class filter_warpwire extends moodle_text_filter {
                     $url = preg_replace('/^ href=("|\')/', '', $matchescode[3][$index]);
                 }
 
-                $url = htmlspecialchars_decode($url, ENT_QUOTES | ENT_SUBSTITUTE);
+                $url = htmlspecialchars_decode($url, ENT_COMPAT);
 
                 $currentsectionid = null;
                 foreach ($sections as $section) {
