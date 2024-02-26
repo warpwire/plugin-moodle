@@ -82,12 +82,12 @@ class setup_status_task extends \core\task\adhoc_task {
                 ];
             }
 
-            \local_warpwire\utilities::setconfiglog('warpwire_url',  'https://' . $internaldomain . '/');
-            \local_warpwire\utilities::setconfiglog('warpwire_key',  $initialltikey['key']);
-            \local_warpwire\utilities::setconfiglog('warpwire_secret',  $initialltikey['secret']);
+            \local_warpwire\utilities::set_config_log('warpwire_url',  'https://' . $internaldomain . '/');
+            \local_warpwire\utilities::set_config_log('warpwire_key',  $initialltikey['key']);
+            \local_warpwire\utilities::set_config_log('warpwire_secret',  $initialltikey['secret']);
 
-            \local_warpwire\utilities::setconfiglog('warpwire_admin_username',  $initialadmincredentials['unique_id']);
-            \local_warpwire\utilities::setconfiglog('warpwire_admin_password',  $initialadmincredentials['password']);
+            \local_warpwire\utilities::set_config_log('warpwire_admin_username',  $initialadmincredentials['unique_id']);
+            \local_warpwire\utilities::set_config_log('warpwire_admin_password',  $initialadmincredentials['password']);
 
             set_config('setup_status', null, 'local_warpwire');
             set_config('setup_status_message', null, 'local_warpwire');

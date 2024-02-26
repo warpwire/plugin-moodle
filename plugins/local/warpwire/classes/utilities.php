@@ -173,7 +173,7 @@ class utilities {
                !empty($allconfig['warpwire_admin_password']);
     }
 
-    public static function setconfiglog($name, $value) {
+    public static function set_config_log($name, $value) {
         $oldvalue = get_config('local_warpwire', $name);
         set_config($name, $value, 'local_warpwire');
         add_to_config_log($name, $oldvalue, $value, 'local_warpwire');

@@ -49,11 +49,11 @@ function resetconfiguration() {
     // Reset all configuration to make sure we have a clean slate.
     set_config('setup_status', null, 'local_warpwire');
     set_config('setup_status_message', null, 'local_warpwire');
-    \local_warpwire\utilities::setconfiglog('warpwire_url', null);
-    \local_warpwire\utilities::setconfiglog('warpwire_key', null);
-    \local_warpwire\utilities::setconfiglog('warpwire_secret', null);
-    \local_warpwire\utilities::setconfiglog('warpwire_admin_username', null);
-    \local_warpwire\utilities::setconfiglog('warpwire_admin_password', null);
+    \local_warpwire\utilities::set_config_log('warpwire_url', null);
+    \local_warpwire\utilities::set_config_log('warpwire_key', null);
+    \local_warpwire\utilities::set_config_log('warpwire_secret', null);
+    \local_warpwire\utilities::set_config_log('warpwire_admin_username', null);
+    \local_warpwire\utilities::set_config_log('warpwire_admin_password', null);
     set_config('warpwire_auth_token', null);
 }
 
