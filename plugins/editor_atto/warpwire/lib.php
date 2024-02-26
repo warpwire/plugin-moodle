@@ -38,17 +38,17 @@ function atto_warpwire_params_for_js() {
 
     $warpwireurl = get_config('local_warpwire', 'warpwire_url');
     if (empty($warpwireurl)) {
-        return array('warpwire_url' => $CFG->wwwroot . '/local/warpwire/html/setup.html');
+        return ['warpwire_url' => $CFG->wwwroot . '/local/warpwire/html/setup.html'];
     }
 
     $ltiurl = \rtrim($warpwireurl, '/') . '/api/lti/';
 
     // Build the query params to pass.
-    $urlparamsquery = http_build_query(array('mode' => 'plugin'), '', '&');
+    $urlparamsquery = http_build_query(['mode' => 'plugin'], '', '&');
 
     $urlparts = parse_url($ltiurl . '?' . $urlparamsquery);
 
-    $parameters = array();
+    $parameters = [];
     if (!empty($urlparts['query'])) {
         parse_str($urlparts['query'], $parameters);
     }
@@ -56,16 +56,16 @@ function atto_warpwire_params_for_js() {
 
     $url = $urlparts['scheme'].'://'.$urlparts['host'].$urlparts['path'].'?'.$urlparts['query'];
 
-    $parts = array(
+    $parts = [
         'url' => $url,
-        'course_id' => $COURSE->id
-    );
+        'course_id' => $COURSE->id,
+    ];
 
     $partsstring = http_build_query($parts, '', '&');
 
     $url = $CFG->wwwroot . '/local/warpwire/?' .$partsstring;
 
-    return(array(
-        'warpwire_url' => $url
-    ));
+    return([
+        'warpwire_url' => $url,
+    ]);
 }

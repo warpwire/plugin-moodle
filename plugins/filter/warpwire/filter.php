@@ -17,7 +17,7 @@
 defined('MOODLE_INTERNAL') || die('Invalid access');
 
 class filter_warpwire extends moodle_text_filter {
-    public function filter($text, array $options = array()) {
+    public function filter($text, array $options = []) {
         global $COURSE, $PAGE, $CFG, $USER;
 
         // If upgrade is running, skip this filter.
@@ -53,7 +53,7 @@ class filter_warpwire extends moodle_text_filter {
                 $texttoreplace = $code;
 
                 if (preg_match('/\[warpwire:(.*)?\]/is', urldecode($code), $matchesstring)) {
-                    $url = htmlspecialchars_decode($matchesstring[1]);
+                    $url = htmlspecialchars_decode($matchesstring[1], ENT_QUOTES | ENT_SUBSTITUTE);
 
                     $currentsectionid = null;
                     foreach ($sections as $section) {
@@ -70,7 +70,7 @@ class filter_warpwire extends moodle_text_filter {
 
                     $urlparts = parse_url($url);
 
-                    $parameters = array();
+                    $parameters = [];
                     if (!empty($urlparts['query'])) {
                         parse_str($urlparts['query'], $parameters);
                     }
@@ -79,12 +79,12 @@ class filter_warpwire extends moodle_text_filter {
 
                     $url = $urlparts['scheme'].'://'.$urlparts['host'].$urlparts['path'].'?'.$urlparts['query'];
 
-                    $parts = array(
+                    $parts = [
                         'url' => $url,
                         'course_id' => $COURSE->id,
                         'module_id' => isset($PAGE->cm->id) ? $PAGE->cm->id : '',
-                        'section_id' => $currentsectionid
-                    );
+                        'section_id' => $currentsectionid,
+                    ];
 
                     // Append wstoken if defined.
                     if (!empty($wstoken)) {
@@ -114,9 +114,9 @@ class filter_warpwire extends moodle_text_filter {
                             $iframeheight = $tag->getAttribute('height');
                         }
                     }
-            
-                    $patterns = array('/URL/', '/WIDTH/', '/HEIGHT/');
-                    $replace = array($url, $iframewidth, $iframeheight);
+
+                    $patterns = ['/URL/', '/WIDTH/', '/HEIGHT/'];
+                    $replace = [$url, $iframewidth, $iframeheight];
                     $iframehtml = preg_replace($patterns, $replace, $iframetemplate);
 
                     // Replace the shortcode with the iframe html.
@@ -135,7 +135,7 @@ class filter_warpwire extends moodle_text_filter {
                     $url = preg_replace('/^ href=("|\')/', '', $matchescode[3][$index]);
                 }
 
-                $url = htmlspecialchars_decode($url);
+                $url = htmlspecialchars_decode($url, ENT_QUOTES | ENT_SUBSTITUTE);
 
                 $currentsectionid = null;
                 foreach ($sections as $section) {
@@ -154,12 +154,12 @@ class filter_warpwire extends moodle_text_filter {
 
                 $url = $urlparts['scheme'].'://'.$urlparts['host'].$urlparts['path'].'?'.$urlparts['query'];
 
-                $parts = array(
+                $parts = [
                     'url' => $url,
                     'course_id' => $COURSE->id,
                     'module_id' => isset($PAGE->cm->id) ? $PAGE->cm->id : '',
-                    'section_id' => $currentsectionid
-                );
+                    'section_id' => $currentsectionid,
+                ];
 
                 // Append wstoken if defined.
                 if (!empty($wstoken)) {
@@ -179,8 +179,8 @@ class filter_warpwire extends moodle_text_filter {
                     $iframeheight = $parameters['height'];
                 }
 
-                $patterns = array('/URL/', '/WIDTH/', '/HEIGHT/');
-                $replace = array($url, $iframewidth, $iframeheight);
+                $patterns = ['/URL/', '/WIDTH/', '/HEIGHT/'];
+                $replace = [$url, $iframewidth, $iframeheight];
                 $iframehtml = preg_replace($patterns, $replace, $iframetemplate);
 
                 // Replace the shortcode with the iframe html.

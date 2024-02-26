@@ -22,6 +22,6 @@ $plugin->release   = '4.1.3';
 $plugin->maturity  = MATURITY_STABLE;
 $plugin->requires  = 2019111800;
 
-$plugin->dependencies = array(
-    'local_warpwire' => 2024020200
-);
+$plugin->dependencies = [
+    'local_warpwire' => 2024020200,
+];
