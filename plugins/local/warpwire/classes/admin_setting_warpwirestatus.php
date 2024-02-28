@@ -53,7 +53,7 @@ class admin_setting_warpwirestatus extends \admin_setting {
     }
 
     public function output_html($data, $query='') {
-        global $OUTPUT, $CFG;
+        global $OUTPUT;
 
         $html = '';
 

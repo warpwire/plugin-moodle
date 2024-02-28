@@ -17,6 +17,6 @@
 $observers = [
     [
         'eventname' => '\core\event\config_log_created',
-        'callback' => '\atto_warpwire\event_handler::on_setting_changed'
-    ]
+        'callback' => '\atto_warpwire\event_handler::on_setting_changed',
+    ],
 ];

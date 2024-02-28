@@ -22,12 +22,12 @@ class event_handler {
             return;
         }
 
-        if (\local_warpwire\utilities::isConfigured()) {
-            \local_warpwire\utilities::errorLogLong('Warpwire plugin is configured. Setting up features.', 'WARPWIRE MOD');
+        if (\local_warpwire\utilities::is_configured()) {
+            \local_warpwire\utilities::error_log_long('Warpwire plugin is configured. Setting up features.', 'WARPWIRE MOD');
 
             self::setmodulevisibility(true);
         } else {
-            \local_warpwire\utilities::errorLogLong('Warpwire plugin is not configured. Disabling features.', 'WARPWIRE MOD');
+            \local_warpwire\utilities::error_log_long('Warpwire plugin is not configured. Disabling features.', 'WARPWIRE MOD');
 
             self::setmodulevisibility(false);
         }
@@ -39,7 +39,7 @@ class event_handler {
         try {
             $DB->set_field('modules', 'visible', $visible ? '1' : '0', ['name' => 'warpwire']);
         } catch (\Throwable $ex) {
-            \local_warpwire\utilities::errorLogLong('Failed to change visibility of warpwire module: ' . $ex, 'WARPWIRE MOD');
+            \local_warpwire\utilities::error_log_long('Failed to change visibility of warpwire module: ' . $ex, 'WARPWIRE MOD');
         }
     }
 }

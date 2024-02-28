@@ -103,11 +103,11 @@ function warpwire_refresh_events($courseid = 0) {
     global $DB;
 
     if ($courseid == 0) {
-        if (!$warpwires = $DB->get_records('warpwire')) {
+        if (!$DB->get_records('warpwire')) {
             return true;
         }
     } else {
-        if (!$warpwires = $DB->get_records('warpwire', ['course' => $courseid])) {
+        if (!$DB->get_records('warpwire', ['course' => $courseid])) {
             return true;
         }
     }

@@ -56,7 +56,6 @@ class restore_warpwire_activity_structure_step extends restore_activity_structur
         global $DB;
 
         $data = (object)$data;
-        $oldid = $data->id;
         $data->course = $this->get_courseid();
 
         if (empty($data->timecreated)) {

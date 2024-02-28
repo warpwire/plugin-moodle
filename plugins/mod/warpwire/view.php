@@ -37,7 +37,7 @@ if ($id) {
     $course     = $DB->get_record('course', ['id' => $warpwire->course], '*', MUST_EXIST);
     $cm         = get_coursemodule_from_instance('warpwire', $warpwire->id, $course->id, false, MUST_EXIST);
 } else {
-    error('You must specify a course_module ID or an instance ID');
+    throw new moodle_exception('You must specify a course_module ID or an instance ID');
 }
 
 require_login($course, true, $cm);

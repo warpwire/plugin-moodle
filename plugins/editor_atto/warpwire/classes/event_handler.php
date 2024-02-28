@@ -22,18 +22,21 @@ class event_handler {
             return;
         }
 
-        if (\local_warpwire\utilities::isConfigured()) {
-            \local_warpwire\utilities::errorLogLong('Warpwire plugin is configured. Setting up Atto toolbar.', 'WARPWIRE ATTO');
+        if (\local_warpwire\utilities::is_configured()) {
+            \local_warpwire\utilities::error_log_long('Warpwire plugin is configured. Setting up Atto toolbar.', 'WARPWIRE ATTO');
 
-            self::installToolbarButton();
+            self::install_toolbar_button();
         } else {
-            \local_warpwire\utilities::errorLogLong('Warpwire plugin is not configured. Disabling Atto toolbar.', 'WARPWIRE ATTO');
+            \local_warpwire\utilities::error_log_long(
+                'Warpwire plugin is not configured. Disabling Atto toolbar.',
+                'WARPWIRE ATTO',
+            );
 
-            self::removeToolbarButton();;
+            self::remove_toolbar_button();;
         }
     }
 
-    public static function installToolbarButton() {
+    public static function install_toolbar_button() {
         $toolbar = get_config('editor_atto', 'toolbar');
         $pos = stristr($toolbar, 'warpwire');
 
@@ -43,7 +46,7 @@ class event_handler {
         }
     }
 
-    public static function removeToolbarButton() {
+    public static function remove_toolbar_button() {
         $toolbar = get_config('editor_atto', 'toolbar');
         $pos = stristr($toolbar, 'warpwire');
 

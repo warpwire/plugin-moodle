@@ -16,50 +16,48 @@
 
 defined('MOODLE_INTERNAL') || die('Invalid access');
 
-class tinymce_warpwire extends editor_tinymce_plugin
-{
+class tinymce_warpwire extends editor_tinymce_plugin {
     /** @var array list of buttons defined by this plugin */
     protected $buttons = array('warpwire');
 
-    protected function update_init_params(array &$params, context $context,
-        array $options = null) {
+    protected function update_init_params(array &$params, context $context, array $options = null) {
         global $CFG, $COURSE;
 
         $filters = filter_get_active_in_context($context);
         $enabled  = array_key_exists('warpwire', $filters) || array_key_exists('filter/warpwire', $filters);
 
         // If warpwire filter is disabled, do not add button.
-        if (!$enabled || !\local_warpwire\utilities::isConfigured()) {
+        if (!$enabled || !\local_warpwire\utilities::is_configured()) {
             return;
         }
 
-        // build the query params to pass
-        $url_params_query = http_build_query(array('mode' => 'plugin'), '', '&');
+        // Build the query params to pass.
+        $urlparamsquery = http_build_query(array('mode' => 'plugin'), '', '&');
 
-        $warpwireUrl = get_config('local_warpwire', 'warpwire_url');
-        if (empty($warpwireUrl)) {
+        $warpwireurl = get_config('local_warpwire', 'warpwire_url');
+        if (empty($warpwireurl)) {
             return array('warpwire_url' => $CFG->wwwroot . '/local/warpwire/html/setup.html');
         }
 
-        $warpwireUrl = \rtrim($warpwireUrl, '/') . '/api/lti/';
-        $url_parts = parse_url($warpwireUrl . '?' . $url_params_query);
+        $warpwireurl = \rtrim($warpwireurl, '/') . '/api/lti/';
+        $urlparts = parse_url($warpwireurl . '?' . $urlparamsquery);
 
         $parameters = array();
-        if(!empty($url_parts['query']))
-            parse_str($url_parts['query'], $parameters);
+        if (!empty($urlparts['query'])) {
+            parse_str($urlparts['query'], $parameters);
+        }
+        $urlparts['query'] = http_build_query($parameters, '', '&');
 
-        $url_parts['query'] = http_build_query($parameters, '', '&');
-
-        $url = $url_parts['scheme'].'://'.$url_parts['host'].$url_parts['path'].'?'.$url_parts['query'];
+        $url = $urlparts['scheme'].'://'.$urlparts['host'].$urlparts['path'].'?'.$urlparts['query'];
 
         $parts = array(
             'url' => $url,
             'course_id' => $COURSE->id
         );
 
-        $partsString = http_build_query($parts, '', '&');
+        $partsstring = http_build_query($parts, '', '&');
 
-        $url = $CFG->wwwroot . '/local/warpwire/?' .$partsString;
+        $url = $CFG->wwwroot . '/local/warpwire/?' .$partsstring;
 
         $params = $params + array(
             'warpwire_url' => $url,
