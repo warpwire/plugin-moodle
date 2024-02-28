@@ -18,3 +18,4 @@ $string['pluginname'] = 'Warpwire';
 $string['modulename'] = 'Warpwire';
 $string['modulenameplural'] = 'Warpwire';
 $string['filtername'] = 'Warpwire filter';
+$string['privacy:metadata'] = 'Filter warpwire plugin does not store any personal data';
