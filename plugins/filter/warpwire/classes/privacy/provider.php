@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Privacy provider implementation for h5p core subsytem.
+ * Privacy provider implementation for filter_warpwire plugin.
  *
  * @package    filter_warpwire
  * @copyright  2024 Warpwire, Inc.  <warpwire.com>
@@ -27,7 +27,7 @@ namespace filter_warpwire\privacy;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Privacy provider implementation for h5p core subsystem.
+ * Privacy provider implementation for filter_warpwire plugin.
  *
  * @copyright  2024 Warpwire, Inc.  <warpwire.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
