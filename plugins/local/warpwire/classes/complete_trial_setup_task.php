@@ -16,34 +16,24 @@
 
 namespace local_warpwire;
 
-class setup_status_task extends \core\task\adhoc_task {
+use moodle_exception;
+
+class complete_lti_setup_task extends \core\task\adhoc_task {
     public function execute() {
-        $data = $this->get_custom_data();
-        $statusurl = $data->status_url;
-
-        \local_warpwire\utilities::stdout_log_long('Starting provisioning status check...', 'WARPWIRE STATUS');
-        $starttime = \time();
-        while (time() - $starttime < 600 && $this->getstatus($statusurl) === false) {
-            \local_warpwire\utilities::stdout_log_long('Waiting 10 seconds...', 'WARPWIRE STATUS');
-            sleep(10);
+        $statusurl = $this->get_custom_data()->status_url;
+        $trialsetupcomplete = $this->check_trial_setup_status($statusurl);
+        if ($trialsetupcomplete) {
+            \local_warpwire\utilities::setup_lti_tool(true);
+            return;
         }
 
-        if (!\local_warpwire\utilities::is_configured()) {
-            if (time() - $starttime < 600) {
-                \local_warpwire\utilities::stdout_log_long('Failed to configure due to error', 'WARPWIRE STATUS');
-            } else {
-                \local_warpwire\utilities::stdout_log_long('Failed to configure after 600 seconds', 'WARPWIRE STATUS');
-            }
-        }
-
-        \local_warpwire\utilities::setupLtiTool(true);
+        // Throw error to force a retry.
+        throw new moodle_exception('Warpwire trial setup is still in progress');
     }
 
-    private function getstatus($statusurl) {
+    private function check_trial_setup_status($statusurl) {
         try {
             $result = \local_warpwire\utilities::make_get_request($statusurl, null, true);
-
-            \local_warpwire\utilities::stdout_log_long($result, 'WARPWIRE STATUS');
 
             set_config('setup_status', $result['status'], 'local_warpwire');
             set_config('setup_status_message', $result['message'], 'local_warpwire');
@@ -64,7 +54,6 @@ class setup_status_task extends \core\task\adhoc_task {
 
             if (!empty($initialtikeyurl)) {
                 $initialltikey = \local_warpwire\utilities::make_get_request($initialtikeyurl, null, true);
-                \local_warpwire\utilities::stdout_log_long($initialltikey, 'WARPWIRE STATUS');
             } else {
                 $initialltikey = [
                     'key' => '',
@@ -74,7 +63,6 @@ class setup_status_task extends \core\task\adhoc_task {
 
             if (!empty($initialadmincredentialsurl)) {
                 $initialadmincredentials = \local_warpwire\utilities::make_get_request($initialadmincredentialsurl, null, true);
-                \local_warpwire\utilities::stdout_log_long($initialadmincredentials, 'WARPWIRE STATUS');
             } else {
                 $initialadmincredentials = [
                     'unique_id' => '',
@@ -94,7 +82,6 @@ class setup_status_task extends \core\task\adhoc_task {
 
             return true;
         } catch (\Throwable $ex) {
-            \local_warpwire\utilities::stdout_log_long((string)$ex, 'WARPWIRE STATUS');
             return false;
         }
     }

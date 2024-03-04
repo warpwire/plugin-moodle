@@ -25,12 +25,12 @@ class event_handler {
         if (\local_warpwire\utilities::is_configured()) {
             \local_warpwire\utilities::error_log_long('Warpwire plugin is configured. Setting up features.', 'WARPWIRE LTI');
 
-            \local_warpwire\utilities::setupLtiTool(true, false);
+            \local_warpwire\utilities::setup_lti_tool(true);
         } else {
             \local_warpwire\utilities::error_log_long('Warpwire plugin is not configured. Disabling features.', 'WARPWIRE LTI');
 
             // Disable the tool by changing its visibility.
-            \local_warpwire\utilities::setupLtiTool(false, false);
+            \local_warpwire\utilities::setup_lti_tool(false);
 
             // It's not possible to remove and later re-add the tool as it breaks any embedded content.
         }

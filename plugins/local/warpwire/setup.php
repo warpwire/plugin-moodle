@@ -18,7 +18,6 @@ require_once(dirname(__FILE__) . '/../../config.php');
 require_once($CFG->libdir . '/adminlib.php');
 
 admin_externalpage_setup('warpwire_trial');
-
 $returnurl = new moodle_url('/admin/settings.php', ['section' => 'local_warpwire']);
 
 if (!confirm_sesskey()) {
@@ -79,12 +78,13 @@ function setuptrial() {
             'dry_run' => false,
         ];
 
-        \local_warpwire\utilities::error_log_long($payload, 'WARPWIRE TRIAL SETUP');
-
-        $decoded = \local_warpwire\utilities::make_post_request($warpwirewebhookurl, $payload,
-        $warpwirewebhookauthkey, $warpwirewebhookauthsecret);
+        $decoded = \local_warpwire\utilities::make_post_request(
+            $warpwirewebhookurl,
+            $payload,
+            $warpwirewebhookauthkey,
+            $warpwirewebhookauthsecret,
+        );
     } catch (\Exception $ex) {
-        \local_warpwire\utilities::error_log_long((string)$ex, 'WARPWIRE TRIAL SETUP');
 
         set_config('setup_status', 'error', 'local_warpwire');
 
@@ -98,18 +98,16 @@ function setuptrial() {
     }
 
     try {
-        $task = new \local_warpwire\setup_status_task();
+        $task = new \local_warpwire\complete_lti_setup_task();
         $task->set_custom_data([
             'status_url' => $decoded['status_url'],
         ]);
-        $result = \core\task\manager::queue_adhoc_task($task);
+        \core\task\manager::queue_adhoc_task($task);
 
         set_config('setup_status', 'queued', 'local_warpwire');
         set_config('setup_status_message', get_string('notice_setup_success', 'local_warpwire'), 'local_warpwire');
 
-        \local_warpwire\utilities::error_log_long('Task queued with ID: ' . $result, 'WARPWIRE TRIAL SETUP');
     } catch (\Exception $ex) {
-        \local_warpwire\utilities::error_log_long((string)$ex, 'WARPWIRE TRIAL SETUP');
 
         set_config('setup_status', 'error', 'local_warpwire');
         set_config('setup_status_message', get_string('notice_setup_error_noretry', 'local_warpwire'), 'local_warpwire');

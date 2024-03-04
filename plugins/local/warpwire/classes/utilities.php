@@ -159,9 +159,11 @@ class utilities {
 
     public static function is_configured() {
         $allconfig = (array)get_config('local_warpwire');
-        return !empty($allconfig['warpwire_url']) &&
-               !empty($allconfig['warpwire_key']) &&
-               !empty($allconfig['warpwire_secret']);
+        return (
+            !empty($allconfig['warpwire_url']) &&
+            !empty($allconfig['warpwire_key']) &&
+            !empty($allconfig['warpwire_secret'])
+        );
     }
 
     public static function is_full_configured() {
@@ -179,7 +181,7 @@ class utilities {
         add_to_config_log($name, $oldvalue, $value, 'local_warpwire');
     }
 
-    public static function setupltitool($enabled, $usestdout = false) {
+    public static function setup_lti_tool($enabled, $usestdout = false) {
         global $CFG;
 
         try {
