@@ -278,13 +278,5 @@ function warpwire_get_file_info($browser, $areas, $course, $cm, $context, $filea
  * @param array $options additional options affecting the file serving
  */
 function warpwire_pluginfile($course, $cm, $context, $filearea, array $args, $forcedownload, array $options=[]) {
-    global $DB, $CFG;
-
-    if ($context->contextlevel != CONTEXT_MODULE) {
-        send_file_not_found();
-    }
-
-    require_login($course, true, $cm);
-
-    send_file_not_found();
+    return false;
 }
