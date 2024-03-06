@@ -24,7 +24,7 @@ function xmldb_local_warpwire_upgrade($oldversion) {
             set_config('local_warpwire', $newurl);
         }
 
-        upgrade_plugin_savepoint(true, 20220712, 'local', 'warpwire');
+        upgrade_plugin_savepoint(true, 2024030600, 'local', 'warpwire');
     }
 
     return true;

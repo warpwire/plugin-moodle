@@ -35,6 +35,10 @@ class check_setup_status extends external_api {
     }
 
     public static function get_status() {
+        $context = \context_system::instance();
+        self::validate_context($context);
+        require_capability('moodle/site:config', $context);
+
         if (\local_warpwire\utilities::is_configured()) {
             return [
                 'status' => 'Success',
