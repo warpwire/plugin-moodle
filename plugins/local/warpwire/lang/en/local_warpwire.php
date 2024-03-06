@@ -80,3 +80,5 @@ $string['action_reset_settings'] = 'Reset Settings';
 $string['setup_error_client_exists'] = '';
 
 $string['lti_tool_description'] = 'Warpwire will record a grade as the percentage of new video content that a viewer watches.';
+
+$string['privacy:metadata'] = 'Local warpwire plugin does not store any personal data';

@@ -18,3 +18,4 @@ $string['pluginname'] = 'Warpwire';
 $string['modulename'] = 'Warpwire';
 $string['modulenameplural'] = 'Warpwire';
 $string['warpwire:desc'] = 'Warpwire';
+$string['privacy:metadata'] = 'Tiny warpwire plugin does not store any personal data';

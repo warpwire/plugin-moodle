@@ -25,5 +25,5 @@
 defined('MOODLE_INTERNAL') || die();
 
 function xmldb_atto_warpwire_uninstall() {
-    \atto_warpwire\event_handler::removeToolbarButton();
+    \atto_warpwire\event_handler::remove_toolbar_button();
 }

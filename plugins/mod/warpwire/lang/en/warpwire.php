@@ -34,3 +34,4 @@ $string['warpwirename'] = 'Warpwire';
 $string['warpwire'] = 'Warpwire';
 $string['pluginadministration'] = 'Warpwire Administration';
 $string['pluginname'] = 'Warpwire';
+$string['privacy:metadata'] = 'Warpwire module plugin does not store any personal data';
