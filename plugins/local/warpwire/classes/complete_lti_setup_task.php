@@ -16,19 +16,29 @@
 
 namespace local_warpwire;
 
-use moodle_exception;
-
 class complete_lti_setup_task extends \core\task\adhoc_task {
-    public function execute() {
-        $statusurl = $this->get_custom_data()->status_url;
-        $trialsetupcomplete = $this->check_trial_setup_status($statusurl);
+    private static $maxattempts = 60;
+    private static $retrydelay = 10;
+
+    public function execute () {
+        $data = $this->get_custom_data();
+        $trialsetupcomplete = $this->check_trial_setup_status($data->status_url);
         if ($trialsetupcomplete) {
             \local_warpwire\utilities::setup_lti_tool(true);
             return;
         }
 
-        // Throw error to force a retry.
-        throw new moodle_exception('Warpwire trial setup is still in progress');
+        if ($data->attempt_count >= $this::$maxattempts) {
+            return;
+        }
+
+        $nextattempt = new self();
+        $nextattempt->set_next_run_time(time() + $this::$retrydelay);
+        $nextattempt->set_custom_data([
+            'attempt_count' => $data->attempt_count + 1,
+            'status_url' => $data->status_url,
+        ]);
+        \core\task\manager::queue_adhoc_task($nextattempt);
     }
 
     private function check_trial_setup_status($statusurl) {

@@ -100,6 +100,7 @@ function setuptrial() {
     try {
         $task = new \local_warpwire\complete_lti_setup_task();
         $task->set_custom_data([
+            'attempt_count' => 1,
             'status_url' => $decoded['status_url'],
         ]);
         \core\task\manager::queue_adhoc_task($task);
