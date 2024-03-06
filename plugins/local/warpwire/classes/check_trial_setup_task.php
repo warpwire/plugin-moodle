@@ -16,7 +16,7 @@
 
 namespace local_warpwire;
 
-class complete_lti_setup_task extends \core\task\adhoc_task {
+class check_trial_setup_task extends \core\task\adhoc_task {
     private static $maxattempts = 60;
     private static $retrydelay = 10;
 
