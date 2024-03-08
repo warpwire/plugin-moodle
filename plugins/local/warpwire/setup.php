@@ -98,7 +98,7 @@ function setuptrial() {
     }
 
     try {
-        $task = new \local_warpwire\complete_lti_setup_task();
+        $task = new \local_warpwire\check_trial_setup_task();
         $task->set_custom_data([
             'attempt_count' => 1,
             'status_url' => $decoded['status_url'],
