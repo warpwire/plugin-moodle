@@ -29,6 +29,8 @@ class check_trial_setup_task extends \core\task\adhoc_task {
         }
 
         if ($data->attempt_count >= $this::$maxattempts) {
+            set_config('setup_status', 'timeout', 'local_warpwire');
+            set_config('setup_status_message', get_string('notice_setup_error_timeout', 'local_warpwire'), 'local_warpwire');
             return;
         }
 
