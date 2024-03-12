@@ -63,6 +63,7 @@ $string['notice_invalid_action'] = 'Invalid action.';
 $string['notice_setup_error'] = 'Setup request failed. Please try again or contact support.';
 $string['notice_setup_error_noauth'] = 'Setup request failed. Missing Warpwire credentials. Please contact support.';
 $string['notice_setup_error_noretry'] = 'Setup request failed. Please contact support.';
+$string['notice_setup_error_timeout'] = 'Setup request timed out. Please try again or contact support.';
 $string['notice_setup_error_client_exists'] = 'Warpwire site already exists. Please contact support to get setup information.';
 $string['notice_setup_success'] = 'Setup request has been sent.';
 

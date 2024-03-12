@@ -154,10 +154,12 @@ class admin_setting_warpwirestatus extends \admin_setting {
         } else if (\local_warpwire\utilities::can_start_trial()) {
             if (!empty($status = get_config('local_warpwire', 'setup_status'))) {
                 $html .= \html_writer::script('', new \moodle_url('/local/warpwire/checkstatus.js'));
-                $html .= \html_writer::tag(
-                    'p',
-                    'Creating a new site may take several minutes. You may leave and return to this page at any time.'
-                );
+                if ($status != 'timeout') {
+                    $html .= \html_writer::tag(
+                        'p',
+                        'Creating a new site may take several minutes. You may leave and return to this page at any time.'
+                    );
+                }
                 if (!in_array(strtolower($status), ['queued', 'notstarted', 'processing', 'unknown'])) {
                     $html .= \html_writer::tag(
                         'p',
