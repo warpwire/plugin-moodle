@@ -206,17 +206,6 @@ function warpwire_print_recent_mod_activity($activity, $courseid, $detail, $modn
 }
 
 /**
- * Function to be run periodically according to the moodle cron
- *
- * Note that this has been deprecated in favour of scheduled task API.
- *
- * @return boolean
- */
-function warpwire_cron () {
-    return true;
-}
-
-/**
  * Returns all other capabilitiess used in the module
  *
  * @return array
