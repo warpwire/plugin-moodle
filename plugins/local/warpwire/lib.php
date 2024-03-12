@@ -41,7 +41,8 @@ function warpwire_external_content($user, $course, $sectionid, $moduleid) {
     $warpwireltiurl = \rtrim($warpwireurl, '/') . '/api/lti/';
 
     $ltiurlparts = parse_url($warpwireltiurl);
-    $urlparts = parse_url($_GET['url']);
+    $url = required_param('url', PARAM_URL);
+    $urlparts = parse_url($url);
 
     $hostmatch = false;
 
@@ -61,7 +62,7 @@ function warpwire_external_content($user, $course, $sectionid, $moduleid) {
 
     // Host is not found in the allowed list - redirect to the provided url.
     if (!$hostmatch) {
-        header('Location: '.$_GET['url']);
+        header('Location: '.$url);
         exit;
     }
 
@@ -120,7 +121,7 @@ function warpwire_external_content($user, $course, $sectionid, $moduleid) {
         || ($ltiurlparts['path'] != $urlparts['path'])
         || (!empty($urlparts['query']))
     ) {
-        $params['returnContext'] = $_GET['url'];
+        $params['returnContext'] = $url;
     }
 
     // Build the OAuth signature.

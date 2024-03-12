@@ -35,9 +35,11 @@ require_login();
 
 global $USER, $COURSE;
 
-$course = $DB->get_record('course', ['id' => $_GET['course_id']]);
-$sectionid = isset($_GET['section_id']) ? $_GET['section_id'] : '';
-$moduleid = isset($_GET['module_id']) ? $_GET['module_id'] : '';
+$courseid = required_param('course_id', PARAM_INT);
+
+$course = $DB->get_record('course', ['id' => $courseid]);
+$sectionid = optional_param('section_id', '', PARAM_INT);
+$moduleid = optional_param('module_id', '', PARAM_INT);
 
 warpwire_external_content($USER, $course, $sectionid, $moduleid);
 exit;
