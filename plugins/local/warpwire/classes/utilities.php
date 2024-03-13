@@ -22,45 +22,9 @@ require_once($CFG->dirroot.'/mod/lti/lib.php');
 require_once($CFG->dirroot.'/mod/lti/locallib.php');
 
 class utilities {
-
-    public static function error_log_long($message, $prefix) {
-        if (!is_string($message)) {
-            $message = json_encode($message, \JSON_PRETTY_PRINT);
-        }
-
-        foreach (explode("\n", $message) as $line) {
-            foreach (str_split($line, 100) as $chunk) {
-                debugging('[' . $prefix . '] ' . $chunk);
-            }
-        }
-    }
-
-    public static function stdout_log_long($message, $prefix) {
-        if (!is_string($message)) {
-            $message = json_encode($message, \JSON_PRETTY_PRINT);
-        }
-
-        foreach (explode("\n", $message) as $line) {
-            foreach (str_split($line, 100) as $chunk) {
-                print('[' . $prefix . '] ' . $chunk . "\n");
-                debugging('[' . $prefix . '] ' . $chunk);
-            }
-        }
-    }
-
-    public static function log_long($message, $prefix, $usestdout) {
-        if ($usestdout) {
-            self::stdout_log_long($message, $prefix);
-        } else {
-            self::error_log_long($message, $prefix);
-        }
-    }
-
     public static function make_get_request($url, $token = null, $usestdout = false) {
         $ch = curl_init($url);
         curl_setopt($ch, \CURLOPT_RETURNTRANSFER, 1);
-
-        self::log_long('GET ' . $url, 'WARPWIRE', $usestdout);
 
         if ($token !== null) {
             curl_setopt($ch, \CURLOPT_HTTPHEADER, ['x-auth-wwtoken: ' . $token]);
@@ -102,8 +66,6 @@ class utilities {
             \CURLOPT_HTTPHEADER => $headers,
         ]);
         curl_setopt($ch, \CURLOPT_RETURNTRANSFER, 1);
-
-        self::log_long('POST ' . $url, 'WARPWIRE', $usestdout);
 
         $result = curl_exec($ch);
         $responsecode = intval(\curl_getinfo($ch, \CURLINFO_RESPONSE_CODE));
@@ -181,7 +143,7 @@ class utilities {
         add_to_config_log($name, $oldvalue, $value, 'local_warpwire');
     }
 
-    public static function setup_lti_tool($enabled, $usestdout = false) {
+    public static function setup_lti_tool($enabled) {
         global $CFG;
 
         try {
@@ -233,8 +195,6 @@ class utilities {
 
             if (!empty($existingltiids)) {
                 foreach ($existingltiids as $existingltiid) {
-                    self::log_long
-                    ('Updating existing Warpwire LTI type (id: ' . $existingltiid . ')', 'WARPWIRE LTI', $usestdout);
                     $type = new \stdClass();
                     $type->state = \LTI_TOOL_STATE_CONFIGURED;
                     $type->id = $existingltiid;
@@ -242,35 +202,13 @@ class utilities {
                     \lti_update_type($type, $data);
                 }
             } else {
-                self::log_long('Creating new Warpwire LTI type', 'WARPWIRE LTI', $usestdout);
                 $type = new \stdClass();
                 $type->state = \LTI_TOOL_STATE_CONFIGURED;
                 \lti_load_type_if_cartridge($data);
                 \lti_add_type($type, $data);
             }
         } catch (\Throwable $ex) {
-            self::log_long('Failed to configure LTI tool: ' . $ex, 'WARPWIRE LTI', $usestdout);
-        }
-    }
-
-    public static function removeltitool($usestdout = false) {
-        try {
-            $existingltiid = null;
-            $existingtypes = \lti_get_lti_types();
-            foreach ($existingtypes as $existingtype) {
-                if ($existingtype->name === 'Warpwire Graded Activity') {
-                    $existingltiid = $existingtype->id;
-                    self::log_long
-                    ('Removing Warpwire LTI type with id ' . $existingltiid, 'WARPWIRE LTI', $usestdout);
-                    \lti_delete_type($existingltiid);
-                }
-            }
-
-            if ($existingltiid === null) {
-                self::log_long('No LTI tool to remove', 'WARPWIRE LTI', $usestdout);
-            }
-        } catch (\Throwable $ex) {
-            self::log_long('Failed to remove LTI tool: ' . $ex, 'WARPWIRE LTI', $usestdout);
+            debugging("Failed to configure Warpwire LTI", DEBUG_NORMAL);
         }
     }
 

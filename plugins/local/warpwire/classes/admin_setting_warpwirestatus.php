@@ -142,7 +142,6 @@ class admin_setting_warpwirestatus extends \admin_setting {
                 $table->data = $data;
                 $html .= \html_writer::table($table);
             } catch (\Throwable $ex) {
-                \local_warpwire\utilities::error_log_long((string)$ex, 'WARPWIRE');
                 $html .= \html_writer::tag('p', get_string('notice_error_usage', 'local_warpwire'));
             }
         } else if (\local_warpwire\utilities::is_configured()) {
