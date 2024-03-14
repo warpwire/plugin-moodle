@@ -35,7 +35,8 @@ class event_handler {
         try {
             $DB->set_field('modules', 'visible', $visible ? '1' : '0', ['name' => 'warpwire']);
         } catch (\Throwable $ex) {
-            debugging('Failed to change visibility of warpwire module', DEBUG_NORMAL);
+            $errmessage = $ex->getMessage();
+            debugging("Failed to change visibility of warpwire module: $errmessage", DEBUG_NORMAL);
         }
     }
 }

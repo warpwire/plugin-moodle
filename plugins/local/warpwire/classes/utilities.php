@@ -208,7 +208,8 @@ class utilities {
                 \lti_add_type($type, $data);
             }
         } catch (\Throwable $ex) {
-            debugging("Failed to configure Warpwire LTI", DEBUG_NORMAL);
+            $errmessage = $ex->getMessage();
+            debugging("Failed to configure Warpwire LTI: $errmessage", DEBUG_NORMAL);
         }
     }
 
