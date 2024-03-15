@@ -23,36 +23,31 @@ class event_handler {
         }
 
         if (\local_warpwire\utilities::is_configured()) {
-            \local_warpwire\utilities::error_log_long('Warpwire plugin is configured. Setting up Atto toolbar.', 'WARPWIRE ATTO');
-
             self::install_toolbar_button();
         } else {
-            \local_warpwire\utilities::error_log_long(
-                'Warpwire plugin is not configured. Disabling Atto toolbar.',
-                'WARPWIRE ATTO',
-            );
-
             self::remove_toolbar_button();;
         }
     }
 
     public static function install_toolbar_button() {
         $toolbar = get_config('editor_atto', 'toolbar');
-        $pos = stristr($toolbar, 'warpwire');
+        $haswarpwire = stristr($toolbar, 'warpwire');
 
-        if (!$pos) {
-            $toolbar = preg_replace('/(.+?=.+?)media($|\s|,)/m', '$1media, warpwire$2', $toolbar, 1);
-            set_config('toolbar', $toolbar, 'editor_atto');
+        if (!$haswarpwire) {
+            $newtoolbar = preg_replace('/(.+?=.+?)media($|\s|,)/m', '$1media, warpwire$2', $toolbar, 1);
+            set_config('toolbar', $newtoolbar, 'editor_atto');
+            add_to_config_log('toolbar', $toolbar, $newtoolbar, 'editor_atto');
         }
     }
 
     public static function remove_toolbar_button() {
         $toolbar = get_config('editor_atto', 'toolbar');
-        $pos = stristr($toolbar, 'warpwire');
+        $haswarpwire = stristr($toolbar, 'warpwire');
 
-        if ($pos) {
-            $toolbar = preg_replace('/(.+?=.+?)media, warpwire($|\s|,)/m', '$1media$2', $toolbar, 1);
-            set_config('toolbar', $toolbar, 'editor_atto');
+        if ($haswarpwire) {
+            $newtoolbar = preg_replace('/(.+?=.+?)media, warpwire($|\s|,)/m', '$1media$2', $toolbar, 1);
+            set_config('toolbar', $newtoolbar, 'editor_atto');
+            add_to_config_log('toolbar', $toolbar, $newtoolbar, 'editor_atto');
         }
     }
 }
