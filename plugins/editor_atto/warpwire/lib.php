@@ -34,38 +34,38 @@ defined('MOODLE_INTERNAL') || die('Invalid access');
  * @return array
  */
 function atto_warpwire_params_for_js() {
-	global $CFG, $COURSE;
+    global $CFG, $COURSE;
 
-    $warpwireUrl = get_config('local_warpwire', 'warpwire_url');
-    if (empty($warpwireUrl)) {
-        return array('warpwire_url' => $CFG->wwwroot . '/local/warpwire/html/setup.html');
+    $warpwireurl = get_config('local_warpwire', 'warpwire_url');
+    if (empty($warpwireurl)) {
+        return ['warpwire_url' => $CFG->wwwroot . '/local/warpwire/html/setup.html'];
     }
 
-    $ltiUrl = \rtrim($warpwireUrl, '/') . '/api/lti/';
+    $ltiurl = \rtrim($warpwireurl, '/') . '/api/lti/';
 
-	// build the query params to pass
-	$url_params_query = http_build_query(array('mode' => 'plugin'), '', '&');
+    // Build the query params to pass.
+    $urlparamsquery = http_build_query(['mode' => 'plugin'], '', '&');
 
-	$url_parts = parse_url($ltiUrl . '?' . $url_params_query);
+    $urlparts = parse_url($ltiurl . '?' . $urlparamsquery);
 
-	$parameters = array();
-	if(!empty($url_parts['query']))
-		parse_str($url_parts['query'], $parameters);
+    $parameters = [];
+    if (!empty($urlparts['query'])) {
+        parse_str($urlparts['query'], $parameters);
+    }
+    $urlparts['query'] = http_build_query($parameters, '', '&');
 
-	$url_parts['query'] = http_build_query($parameters, '', '&');
+    $url = $urlparts['scheme'].'://'.$urlparts['host'].$urlparts['path'].'?'.$urlparts['query'];
 
-	$url = $url_parts['scheme'].'://'.$url_parts['host'].$url_parts['path'].'?'.$url_parts['query'];
+    $parts = [
+        'url' => $url,
+        'course_id' => $COURSE->id,
+    ];
 
-	$parts = array(
-		'url' => $url,
-		'course_id' => $COURSE->id
-	);
+    $partsstring = http_build_query($parts, '', '&');
 
-	$partsString = http_build_query($parts, '', '&');
+    $url = $CFG->wwwroot . '/local/warpwire/?' .$partsstring;
 
-	$url = $CFG->wwwroot . '/local/warpwire/?' .$partsString;
-
-	return(array(
-		'warpwire_url' => $url
-	));
+    return([
+        'warpwire_url' => $url,
+    ]);
 }

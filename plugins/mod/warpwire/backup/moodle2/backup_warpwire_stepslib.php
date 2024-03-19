@@ -23,8 +23,6 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die;
-
 /**
  * Define the complete warpwire structure for backup, with file and id annotations
  *
@@ -41,18 +39,15 @@ class backup_warpwire_activity_structure_step extends backup_activity_structure_
      * @return backup_nested_element
      */
     protected function define_structure() {
-
-        // Get know if we are including userinfo.
-        $userinfo = $this->get_setting_value('userinfo');
-
         // Define the root element describing the warpwire instance.
-        $warpwire = new backup_nested_element('warpwire', array('id'), array(
-            'name', 'intro', 'introformat', 'grade'));
+        $warpwire = new backup_nested_element('warpwire', ['id'], [
+            'name', 'intro', 'introformat', 'grade',
+        ]);
 
         // If we had more elements, we would build the tree here.
 
         // Define data sources.
-        $warpwire->set_source_table('warpwire', array('id' => backup::VAR_ACTIVITYID));
+        $warpwire->set_source_table('warpwire', ['id' => backup::VAR_ACTIVITYID]);
 
         // If we were referring to other tables, we would annotate the relation
         // with the element's annotate_ids() method.

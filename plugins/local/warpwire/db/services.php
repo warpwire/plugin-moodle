@@ -16,16 +16,18 @@
 
 namespace local_warpwire;
 
+defined('MOODLE_INTERNAL') || die();
+
 $services = [
     'warpwiresetupservice' => [
         'functions' => ['local_warpwire_check_setup_status'],
-        'requiredcapability' => '',
+        'requiredcapability' => 'moodle/site:config',
         'restrictedusers' => 0,
         'enabled' => 1,
         'shortname' => '',
         'downloadfils' => '',
-        'uploadfiles' => ''
-    ]
+        'uploadfiles' => '',
+    ],
 ];
 
 $functions = [
@@ -36,6 +38,6 @@ $functions = [
         'type' => 'read',
         'ajax' => true,
         'services' => [],
-        'capabilities' => ''
-    ]
+        'capabilities' => 'moodle/site:config',
+    ],
 ];

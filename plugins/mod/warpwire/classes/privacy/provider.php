@@ -15,14 +15,31 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Strings for component 'atto_warpwire', language 'en'.
+ * Privacy provider implementation for mod_warpwire plugin.
  *
- * @package    atto_warpwire
- * @copyright  2016 Warpwire  <warpwire.com>
+ * @package    mod_warpwire
+ * @copyright  2024 Warpwire, Inc.  <warpwire.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['pluginname'] = 'Warpwire';
-$string['modulename'] = 'Warpwire';
-$string['modulenameplural'] = 'Warpwire';
-$string['privacy:metadata'] = 'Atto warpwire plugin does not store any personal data';
+namespace mod_warpwire\privacy;
+
+defined('MOODLE_INTERNAL') || die();
+
+/**
+ * Privacy provider implementation for mod_warpwire plugin.
+ *
+ * @copyright  2024 Warpwire, Inc.  <warpwire.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class provider implements \core_privacy\local\metadata\null_provider {
+    /**
+     * Get the language string identifier with the component's language
+     * file to explain why this plugin stores no data.
+     *
+     * @return  string
+     */
+    public static function get_reason() : string {
+        return 'privacy:metadata';
+    }
+}

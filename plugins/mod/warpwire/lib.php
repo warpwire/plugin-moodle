@@ -22,8 +22,6 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-
 /* Moodle core API */
 
 /**
@@ -45,7 +43,7 @@ function warpwire_supports($feature) {
             return true;
         default:
             if (defined('FEATURE_MOD_PURPOSE') && defined('MOD_PURPOSE_CONTENT') && $feature == FEATURE_MOD_PURPOSE) {
-                // makes the icon blue
+                // Makes the icon blue.
                 return MOD_PURPOSE_CONTENT;
             }
             return null;
@@ -105,11 +103,11 @@ function warpwire_refresh_events($courseid = 0) {
     global $DB;
 
     if ($courseid == 0) {
-        if (!$warpwires = $DB->get_records('warpwire')) {
+        if (!$DB->get_records('warpwire')) {
             return true;
         }
     } else {
-        if (!$warpwires = $DB->get_records('warpwire', array('course' => $courseid))) {
+        if (!$DB->get_records('warpwire', ['course' => $courseid])) {
             return true;
         }
     }
@@ -126,13 +124,13 @@ function warpwire_refresh_events($courseid = 0) {
 function warpwire_delete_instance($id) {
     global $DB;
 
-    if (! $warpwire = $DB->get_record('warpwire', array('id' => $id))) {
+    if (! $warpwire = $DB->get_record('warpwire', ['id' => $id])) {
         return false;
     }
 
     // Delete any dependent records here.
 
-    $DB->delete_records('warpwire', array('id' => $warpwire->id));
+    $DB->delete_records('warpwire', ['id' => $warpwire->id]);
 
     return true;
 }
@@ -165,7 +163,8 @@ function warpwire_user_outline($course, $user, $mod, $warpwire) {
  * @param cm_info $mod course module info
  * @param stdClass $warpwire the module instance record
  */
-function warpwire_user_complete($course, $user, $mod, $warpwire) { }
+function warpwire_user_complete($course, $user, $mod, $warpwire) {
+}
 
 /**
  * Given a course and a time, this module should find recent activity
@@ -191,7 +190,8 @@ function warpwire_print_recent_activity($course, $viewfullnames, $timestart) {
  * @param int $userid check for a particular user's activity only, defaults to 0 (all users)
  * @param int $groupid check for a particular group's activity only, defaults to 0 (all groups)
  */
-function warpwire_get_recent_mod_activity(&$activities, &$index, $timestart, $courseid, $cmid, $userid=0, $groupid=0) { }
+function warpwire_get_recent_mod_activity(&$activities, &$index, $timestart, $courseid, $cmid, $userid=0, $groupid=0) {
+}
 
 /**
  * Prints single activity item prepared by {@link warpwire_get_recent_mod_activity()}
@@ -202,17 +202,7 @@ function warpwire_get_recent_mod_activity(&$activities, &$index, $timestart, $co
  * @param array $modnames as returned by {@link get_module_types_names()}
  * @param bool $viewfullnames display users' full names
  */
-function warpwire_print_recent_mod_activity($activity, $courseid, $detail, $modnames, $viewfullnames) { }
-
-/**
- * Function to be run periodically according to the moodle cron
- *
- * Note that this has been deprecated in favour of scheduled task API.
- *
- * @return boolean
- */
-function warpwire_cron () {
-    return true;
+function warpwire_print_recent_mod_activity($activity, $courseid, $detail, $modnames, $viewfullnames) {
 }
 
 /**
@@ -221,7 +211,7 @@ function warpwire_cron () {
  * @return array
  */
 function warpwire_get_extra_capabilities() {
-    return array();
+    return [];
 }
 
 /* File API */
@@ -238,7 +228,7 @@ function warpwire_get_extra_capabilities() {
  * @return array of [(string)filearea] => (string)description
  */
 function warpwire_get_file_areas($course, $cm, $context) {
-    return array();
+    return [];
 }
 
 /**
@@ -276,14 +266,6 @@ function warpwire_get_file_info($browser, $areas, $course, $cm, $context, $filea
  * @param bool $forcedownload whether or not force download
  * @param array $options additional options affecting the file serving
  */
-function warpwire_pluginfile($course, $cm, $context, $filearea, array $args, $forcedownload, array $options=array()) {
-    global $DB, $CFG;
-
-    if ($context->contextlevel != CONTEXT_MODULE) {
-        send_file_not_found();
-    }
-
-    require_login($course, true, $cm);
-
-    send_file_not_found();
+function warpwire_pluginfile($course, $cm, $context, $filearea, array $args, $forcedownload, array $options=[]) {
+    return false;
 }

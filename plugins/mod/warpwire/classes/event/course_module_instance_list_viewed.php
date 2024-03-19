@@ -24,8 +24,6 @@
 
 namespace mod_warpwire\event;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * The mod_warpwire instance list viewed event class.
  *

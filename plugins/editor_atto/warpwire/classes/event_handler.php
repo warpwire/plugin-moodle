@@ -22,34 +22,32 @@ class event_handler {
             return;
         }
 
-        if (\local_warpwire\utilities::isConfigured()) {
-            \local_warpwire\utilities::errorLogLong('Warpwire plugin is configured. Setting up Atto toolbar.', 'WARPWIRE ATTO');
-
-            self::installToolbarButton();
+        if (\local_warpwire\utilities::is_configured()) {
+            self::install_toolbar_button();
         } else {
-            \local_warpwire\utilities::errorLogLong('Warpwire plugin is not configured. Disabling Atto toolbar.', 'WARPWIRE ATTO');
-
-            self::removeToolbarButton();;
+            self::remove_toolbar_button();;
         }
     }
 
-    public static function installToolbarButton() {
+    public static function install_toolbar_button() {
         $toolbar = get_config('editor_atto', 'toolbar');
-        $pos = stristr($toolbar, 'warpwire');
+        $haswarpwire = stristr($toolbar, 'warpwire');
 
-        if (!$pos) {
-            $toolbar = preg_replace('/(.+?=.+?)media($|\s|,)/m', '$1media, warpwire$2', $toolbar, 1);
-            set_config('toolbar', $toolbar, 'editor_atto');
+        if (!$haswarpwire) {
+            $newtoolbar = preg_replace('/(.+?=.+?)media($|\s|,)/m', '$1media, warpwire$2', $toolbar, 1);
+            set_config('toolbar', $newtoolbar, 'editor_atto');
+            add_to_config_log('toolbar', $toolbar, $newtoolbar, 'editor_atto');
         }
     }
 
-    public static function removeToolbarButton() {
+    public static function remove_toolbar_button() {
         $toolbar = get_config('editor_atto', 'toolbar');
-        $pos = stristr($toolbar, 'warpwire');
+        $haswarpwire = stristr($toolbar, 'warpwire');
 
-        if ($pos) {
-            $toolbar = preg_replace('/(.+?=.+?)media, warpwire($|\s|,)/m', '$1media$2', $toolbar, 1);
-            set_config('toolbar', $toolbar, 'editor_atto');
+        if ($haswarpwire) {
+            $newtoolbar = preg_replace('/(.+?=.+?)media, warpwire($|\s|,)/m', '$1media$2', $toolbar, 1);
+            set_config('toolbar', $newtoolbar, 'editor_atto');
+            add_to_config_log('toolbar', $toolbar, $newtoolbar, 'editor_atto');
         }
     }
 }
