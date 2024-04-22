@@ -17,6 +17,16 @@
 defined('MOODLE_INTERNAL') || die('Invalid access');
 
 class filter_warpwire extends moodle_text_filter {
+    /**
+     * Main function for displaying embedded content in text.
+     *
+     * @global mixed $COURSE
+     * @global mixed $PAGE
+     * @global stdClass $CFG
+     * @global mixed $USER
+     * @param string $text html
+     * @param array $options - not used
+     */
     public function filter($text, array $options = []) {
         global $COURSE, $PAGE, $CFG, $USER;
 

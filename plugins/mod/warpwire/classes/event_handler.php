@@ -17,6 +17,13 @@
 namespace mod_warpwire;
 
 class event_handler {
+    /**
+     * Changes the visibility of Warpwire module if a critical setting changed.
+     * Called by observer in db/events.
+     *
+     * @param \core\event\config_log_created $evt
+     * @return void
+     */
     public static function on_setting_changed(\core\event\config_log_created $evt) {
         if ($evt->other['plugin'] !== 'local_warpwire') {
             return;
@@ -29,6 +36,12 @@ class event_handler {
         }
     }
 
+    /**
+     * Sets the module visibility.
+     *
+     * @param boolean $visible
+     * @return void
+     */
     private static function setmodulevisibility($visible) {
         global $DB;
 

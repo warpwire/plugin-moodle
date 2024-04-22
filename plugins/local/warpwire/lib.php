@@ -30,6 +30,15 @@ define('LOCAL_WARPWIRE_SECRET_PARAMETER', 'warpwire_secret');
 $path = dirname(__FILE__) . '/library';
 set_include_path(get_include_path() . PATH_SEPARATOR . $path);
 
+/**
+ * Main function for displaying a Warpwire media libraries
+ *
+ * @global stdClass $CFG global config
+ * @param stdClass $user
+ * @param stdClass $course
+ * @param string $sectionid
+ * @param string $moduleid
+ */
 function warpwire_external_content($user, $course, $sectionid, $moduleid) {
     global $CFG;
     $warpwireurl = get_config('local_warpwire', 'warpwire_url');
@@ -165,12 +174,21 @@ function warpwire_external_content($user, $course, $sectionid, $moduleid) {
     exit;
 }
 
+/**
+ * Build OAuth signature
+ *
+ * @param string $method POST
+ * @param string $url
+ * @param mixed $params
+ * @param string $secret
+ * @return string url signature
+ */
 function build_signature($method, $url, $params, $secret) {
     // Parse the provided url to be normalized.
     $urlparts = parse_url($url);
     $normalizedurl = $urlparts['scheme'] . "://" . $urlparts['host'] . $urlparts['path'];
 
-    // Remove oauth_signature if present
+    // Remove oauth_signature if present.
     // Ref: Spec: 9.1.1 ("The oauth_signature parameter MUST be excluded.").
     if (isset($params['oauth_signature'])) {
         unset($params['oauth_signature']);
@@ -198,6 +216,12 @@ function build_signature($method, $url, $params, $secret) {
     return $computedsignature;
 }
 
+/**
+ * Builds an HTTP query string from an associative array of parameters.
+ *
+ * @param array $params An associative array of parameters.
+ * @return string The built query string.
+ */
 function build_http_query($params) {
     if (!$params) {
         return '';
@@ -230,6 +254,15 @@ function build_http_query($params) {
     return implode('&', $pairs);
 }
 
+/**
+ * URL-encodes a string or an array of strings according to RFC 3986.
+ *
+ * This function encodes a string or an array of strings to be used in a URL query string.
+ * It replaces spaces with '+' and ensures that the tilde character '~' is encoded as '%7E'.
+ *
+ * @param mixed $input The input to be URL-encoded. This can be a string or an array of strings.
+ * @return mixed The URL-encoded input.
+ */
 function urlencode_rfc3986($input) {
     if (is_array($input)) {
         return array_map('urlencode_rfc3986', $input);
@@ -244,8 +277,12 @@ function urlencode_rfc3986($input) {
     }
 }
 
+/**
+ * Reset all Warpwire configurations.
+ *
+ * @return void
+ */
 function resetconfiguration() {
-    // Reset all configuration to make sure we have a clean slate.
     set_config('setup_status', null, 'local_warpwire');
     set_config('setup_status_message', null, 'local_warpwire');
     \local_warpwire\utilities::set_config_log('warpwire_url', null);
@@ -256,6 +293,13 @@ function resetconfiguration() {
     set_config('warpwire_auth_token', null);
 }
 
+/**
+ * Sets up a Warpwire trial for the moodle site and queues an adhoc task to
+ * check the setup status of the trial.
+ *
+ * @global stdClass $CFG config
+ * @return void
+ */
 function setuptrial() {
     global $CFG;
 
@@ -319,6 +363,14 @@ function setuptrial() {
     redirectandexit(get_string('notice_setup_success', 'local_warpwire'));
 }
 
+/**
+ * Redirects the user to a specified URL and displays a message before exiting the script.
+ *
+ * @global object $OUTPUT An object that handles output operations.
+ * @global string $returnurl The URL to redirect the user to.
+ * @param string $message The message to display to the user before redirecting.
+ * @return void
+ */
 function redirectandexit($message) {
     global $OUTPUT, $returnurl;
 
