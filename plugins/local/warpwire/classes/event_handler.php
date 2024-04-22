@@ -17,6 +17,15 @@
 namespace local_warpwire;
 
 class event_handler {
+    /**
+     * Changes the visibility of the LTI tool if a critical setting changed.
+     * If URL, username or password changes it clears out the auth token so the plugin
+     * has to reauthenticate.
+     * Called by observer in db/events.
+     *
+     * @param \core\event\config_log_created $evt
+     * @return void
+     */
     public static function on_setting_changed(\core\event\config_log_created $evt) {
         if ($evt->other['plugin'] !== 'local_warpwire') {
             return;

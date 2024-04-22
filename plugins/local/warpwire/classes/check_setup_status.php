@@ -21,10 +21,20 @@ require_once("$CFG->libdir/externallib.php");
 defined('MOODLE_INTERNAL') || die();
 
 class check_setup_status extends \external_api {
+    /**
+     * Defines the parameters for the get_status function.
+     *
+     * @return external_function_parameters An object describing the parameters.
+     */
     public static function get_status_parameters() {
         return new \external_function_parameters([]);
     }
 
+    /**
+     * Describes the structure of the data returned by the get_status function.
+     *
+     * @return external_single_structure An object describing the structure of the returned data.
+     */
     public static function get_status_returns() {
         return new \external_single_structure([
             'status' => new \external_value(\PARAM_TEXT, 'general status'),
@@ -32,6 +42,12 @@ class check_setup_status extends \external_api {
         ]);
     }
 
+    /**
+     * Checks if warpwire is configured and returns the status and a message.
+     * Requires the 'moodle/site:config' capability.
+     *
+     * @return array An array containing the status (notstarted, processing, success, error) and a message.
+     */
     public static function get_status() {
         $context = \context_system::instance();
         self::validate_context($context);
