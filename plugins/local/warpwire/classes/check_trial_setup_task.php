@@ -20,6 +20,10 @@ class check_trial_setup_task extends \core\task\adhoc_task {
     private static $maxattempts = 60;
     private static $retrydelay = 10;
 
+    /**
+     * Execute the ad hoc task - check if trial setup is complete and setup lti tool.
+     * If not completed, queue another adhoc task to check again in 10 seconds.
+     */
     public function execute () {
         $data = $this->get_custom_data();
         $trialsetupcomplete = $this->check_trial_setup_status($data->status_url);
@@ -43,6 +47,10 @@ class check_trial_setup_task extends \core\task\adhoc_task {
         \core\task\manager::queue_adhoc_task($nextattempt);
     }
 
+    /**
+     * Pings the warpwire api to check on the trial setup status
+     * and stores the status in config table
+     */
     private function check_trial_setup_status($statusurl) {
         try {
             $result = \local_warpwire\utilities::make_get_request($statusurl, null, true);

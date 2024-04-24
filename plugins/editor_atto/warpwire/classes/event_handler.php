@@ -17,6 +17,12 @@
 namespace atto_warpwire;
 
 class event_handler {
+    /**
+     * Handles event when a configuration setting changes.
+     *
+     * @param \core\event\config_log_created $evt The event object
+     * @return void
+     */
     public static function on_setting_changed(\core\event\config_log_created $evt) {
         if ($evt->other['plugin'] !== 'local_warpwire') {
             return;
@@ -29,6 +35,11 @@ class event_handler {
         }
     }
 
+    /**
+     * Adds requisite value to atto config to display the Warpwire toolbar button.
+     *
+     * @return void
+     */
     public static function install_toolbar_button() {
         $toolbar = get_config('editor_atto', 'toolbar');
         $haswarpwire = stristr($toolbar, 'warpwire');
@@ -40,6 +51,11 @@ class event_handler {
         }
     }
 
+    /**
+     * Removes requisite value from atto config to display the Warpwire toolbar button.
+     *
+     * @return void
+     */
     public static function remove_toolbar_button() {
         $toolbar = get_config('editor_atto', 'toolbar');
         $haswarpwire = stristr($toolbar, 'warpwire');

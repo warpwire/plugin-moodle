@@ -22,7 +22,14 @@ require_once($CFG->dirroot.'/mod/lti/lib.php');
 require_once($CFG->dirroot.'/mod/lti/locallib.php');
 
 class utilities {
-    public static function make_get_request($url, $token = null, $usestdout = false) {
+    /**
+     * Makes a get request with curl.
+     *
+     * @param string $url
+     * @param string|null $token
+     * @return mixed
+     */
+    public static function make_get_request($url, $token = null) {
         $ch = curl_init($url);
         curl_setopt($ch, \CURLOPT_RETURNTRANSFER, 1);
 
@@ -48,7 +55,15 @@ class utilities {
         return $decoded;
     }
 
-    public static function make_post_request($url, $body, $authuser = '', $authpassword = '', $usestdout = false) {
+    /**
+     * Makes a post request with curl.
+     *
+     * @param string $url
+     * @param mixed $body
+     * @param string $authuser
+     * @param string $authpassword
+     */
+    public static function make_post_request($url, $body, $authuser = '', $authpassword = '') {
         $headers = [
             'Content-Type: application/json',
         ];
@@ -86,7 +101,13 @@ class utilities {
         return $decoded;
     }
 
-    public static function make_authenticated_get_request($url, $usestdout = false) {
+    /**
+     * Uses Warpwire auth token to make an authenticated request
+     *
+     * @param string $url
+     * @return mixed $result
+     */
+    public static function make_authenticated_get_request($url) {
         if (!self::is_full_configured()) {
             throw new \Exception('Site is not configured to connect to Warpwire');
         }
@@ -98,13 +119,13 @@ class utilities {
         }
 
         try {
-            $result = self::make_get_request($url, $authtoken, $usestdout);
+            $result = self::make_get_request($url, $authtoken);
         } catch (\Exception $ex) {
             if ($ex->getCode() === 401) {
                 $authtoken = self::authorize();
                 set_config('warpwire_auth_token', $authtoken, 'local_warpwire');
 
-                $result = self::make_get_request($url, $authtoken, $usestdout);
+                $result = self::make_get_request($url, $authtoken);
             } else {
                 throw $ex;
             }
@@ -113,12 +134,22 @@ class utilities {
         return $result;
     }
 
+    /**
+     * Determine if the requisite config values for starting a trial are set.
+     *
+     * @return boolean
+     */
     public static function can_start_trial() {
         global $CFG;
 
         return !empty($CFG->warpwireWebhookUrl) && !empty($CFG->warpwireWebhookAuthKey) && !empty($CFG->warpwireWebhookAuthSecret);
     }
 
+    /**
+     * Checks if site is configured with necessary Warpwire credentials.
+     *
+     * @return boolean
+     */
     public static function is_configured() {
         $allconfig = (array)get_config('local_warpwire');
         return (
@@ -128,6 +159,11 @@ class utilities {
         );
     }
 
+    /**
+     * Checks if site has all Warpwire credentials configured.
+     *
+     * @return boolean
+     */
     public static function is_full_configured() {
         $allconfig = (array)get_config('local_warpwire');
         return !empty($allconfig['warpwire_url']) &&
@@ -137,12 +173,24 @@ class utilities {
                !empty($allconfig['warpwire_admin_password']);
     }
 
+    /**
+     * Update the config and add the update to the config log
+     *
+     * @param string $name the config name
+     * @param string $value
+     */
     public static function set_config_log($name, $value) {
         $oldvalue = get_config('local_warpwire', $name);
         set_config($name, $value, 'local_warpwire');
         add_to_config_log($name, $oldvalue, $value, 'local_warpwire');
     }
 
+    /**
+     * Setup lti tool for Warpwire graded activities.
+     * Used for setting up the lti or to disable it.
+     *
+     * @param boolean $enabled
+     */
     public static function setup_lti_tool($enabled) {
         global $CFG;
 
@@ -213,6 +261,11 @@ class utilities {
         }
     }
 
+    /**
+     * Gets an auth token from Warpwire.
+     *
+     * @return string auth token
+     */
     private static function authorize() {
         $baseurl = get_config('local_warpwire', 'warpwire_url');
         $adminusername = get_config('local_warpwire', 'warpwire_admin_username');

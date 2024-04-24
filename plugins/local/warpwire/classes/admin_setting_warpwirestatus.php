@@ -29,29 +29,63 @@ class admin_setting_warpwirestatus extends \admin_setting {
         'storage' => 'Storage',
     ];
 
+    /**
+     * Constructor.
+     */
     public function __construct() {
         $this->nosave = true;
         $this->plugin = 'local_warpwire';
         parent::__construct('setup_setup', 'Warpwire Status', '', '');
     }
 
+    /**
+     * This function is required by any class extending admin_setting.
+     * Always returns true, does nothing.
+     *
+     * @return bool true.
+     */
     public function get_setting() {
         return true;
     }
 
+    /**
+     * This function is required by any class extending admin_setting.
+     * Always returns true, does nothing.
+     *
+     * @return bool true.
+     */
     public function get_defaultsetting() {
         return true;
     }
 
+    /**
+     * This function is required by any class extending admin_setting.
+     * Always returns '', does not write anything.
+     *
+     * @param string|array $data the data
+     * @return string Always returns ''.
+     */
     public function write_setting($data) {
-        // Do not write any setting.
         return '';
     }
 
+    /**
+     * This function is required by any class extending admin_setting.
+     * Always returns false, does nothing.
+     *
+     * @return bool false.
+     */
     public function is_related($query) {
         return false;
     }
 
+    /**
+     * Builds the HTML for warpwire status admin page.
+     *
+     * @param string $data
+     * @param string $query
+     * @return string html
+     */
     public function output_html($data, $query='') {
         global $OUTPUT;
 
@@ -187,6 +221,12 @@ class admin_setting_warpwirestatus extends \admin_setting {
         return highlight($query, $html);
     }
 
+    /**
+     * Creates the start trial button html
+     *
+     * @param array $attrs button attributes
+     * @return string html
+     */
     private function create_start_trial_button($attrs = []) {
         return \html_writer::start_div('box generalbox py-3', $attrs)
              . \html_writer::link(
@@ -198,6 +238,13 @@ class admin_setting_warpwirestatus extends \admin_setting {
              . \html_writer::end_div();
     }
 
+    /**
+     * Pretty prints usage data.
+     *
+     * @param string $metric
+     * @param null|float $value
+     * @return string
+     */
     private function pretty_print_amount($metric, $value) {
         if ($value === null) {
             return 'No Limit';
