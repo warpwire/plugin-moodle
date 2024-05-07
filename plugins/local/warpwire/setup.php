@@ -32,15 +32,15 @@ $canstarttrial = \local_warpwire\utilities::can_start_trial();
 switch($action) {
     case 'setup':
         if ($isconfigured) {
-            redirectandexit(get_string('notice_already_configured', 'local_warpwire'));
+            local_warpwire_redirect_and_exit(get_string('notice_already_configured', 'local_warpwire'));
         } else if (!$canstarttrial) {
-            redirectandexit(get_string('notice_cannot_start_trial', 'local_warpwire'));
+            local_warpwire_redirect_and_exit(get_string('notice_cannot_start_trial', 'local_warpwire'));
         }
 
-        resetconfiguration();
-        setuptrial();
+        local_warpwire_reset_configuration();
+        local_warpwire_setup_trial();
         break;
     default:
-        redirectandexit(get_string('notice_invalid_action', 'local_warpwire'));
+        local_warpwire_redirect_and_exit(get_string('notice_invalid_action', 'local_warpwire'));
         break;
 }
