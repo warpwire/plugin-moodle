@@ -41,5 +41,5 @@ $course = $DB->get_record('course', ['id' => $courseid]);
 $sectionid = optional_param('section_id', '', PARAM_INT);
 $moduleid = optional_param('module_id', '', PARAM_INT);
 
-warpwire_external_content($USER, $course, $sectionid, $moduleid);
+local_warpwire_external_content($USER, $course, $sectionid, $moduleid);
 exit;
