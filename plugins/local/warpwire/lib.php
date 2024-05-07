@@ -39,7 +39,7 @@ set_include_path(get_include_path() . PATH_SEPARATOR . $path);
  * @param string $sectionid
  * @param string $moduleid
  */
-function warpwire_external_content($user, $course, $sectionid, $moduleid) {
+function local_warpwire_external_content($user, $course, $sectionid, $moduleid) {
     global $CFG;
     $warpwireurl = get_config('local_warpwire', 'warpwire_url');
     if (empty($warpwireurl)) {
@@ -134,7 +134,7 @@ function warpwire_external_content($user, $course, $sectionid, $moduleid) {
     }
 
     // Build the OAuth signature.
-    $sig = build_signature('POST', $warpwireltiurl, $params, get_config('local_warpwire', 'warpwire_secret'));
+    $sig = local_warpwire_build_signature('POST', $warpwireltiurl, $params, get_config('local_warpwire', 'warpwire_secret'));
 
     $params['oauth_signature'] = $sig;
 
@@ -183,7 +183,7 @@ function warpwire_external_content($user, $course, $sectionid, $moduleid) {
  * @param string $secret
  * @return string url signature
  */
-function build_signature($method, $url, $params, $secret) {
+function local_warpwire_build_signature($method, $url, $params, $secret) {
     // Parse the provided url to be normalized.
     $urlparts = parse_url($url);
     $normalizedurl = $urlparts['scheme'] . "://" . $urlparts['host'] . $urlparts['path'];
@@ -194,7 +194,7 @@ function build_signature($method, $url, $params, $secret) {
         unset($params['oauth_signature']);
     }
 
-    $signableparams = build_http_query($params);
+    $signableparams = local_warpwire_build_http_query($params);
 
     $parts = [
         $method,
@@ -202,14 +202,14 @@ function build_signature($method, $url, $params, $secret) {
         $signableparams,
     ];
 
-    $basestring = implode('&', urlencode_rfc3986($parts));
+    $basestring = implode('&', local_warpwire_url_encode_rfc3986($parts));
 
     $keyparts = [
         $secret,
         "",
     ];
 
-    $keyparts = urlencode_rfc3986($keyparts);
+    $keyparts = local_warpwire_url_encode_rfc3986($keyparts);
     $key = implode('&', $keyparts);
 
     $computedsignature = base64_encode(hash_hmac('sha1', $basestring, $key, true));
@@ -222,14 +222,14 @@ function build_signature($method, $url, $params, $secret) {
  * @param array $params An associative array of parameters.
  * @return string The built query string.
  */
-function build_http_query($params) {
+function local_warpwire_build_http_query($params) {
     if (!$params) {
         return '';
     }
 
     // Urlencode both keys and values.
-    $keys = urlencode_rfc3986(array_keys($params));
-    $values = urlencode_rfc3986(array_values($params));
+    $keys = local_warpwire_url_encode_rfc3986(array_keys($params));
+    $values = local_warpwire_url_encode_rfc3986(array_values($params));
     $params = array_combine($keys, $values);
 
     // Parameters are sorted by name, using lexicographical byte value ordering.
@@ -263,9 +263,9 @@ function build_http_query($params) {
  * @param mixed $input The input to be URL-encoded. This can be a string or an array of strings.
  * @return mixed The URL-encoded input.
  */
-function urlencode_rfc3986($input) {
+function local_warpwire_url_encode_rfc3986($input) {
     if (is_array($input)) {
-        return array_map('urlencode_rfc3986', $input);
+        return array_map('local_warpwire_url_encode_rfc3986', $input);
     } else if (is_scalar($input)) {
         return str_replace(
             '+',
@@ -282,7 +282,7 @@ function urlencode_rfc3986($input) {
  *
  * @return void
  */
-function resetconfiguration() {
+function local_warpwire_reset_configuration() {
     set_config('setup_status', null, 'local_warpwire');
     set_config('setup_status_message', null, 'local_warpwire');
     \local_warpwire\utilities::set_config_log('warpwire_url', null);
@@ -300,7 +300,7 @@ function resetconfiguration() {
  * @global stdClass $CFG config
  * @return void
  */
-function setuptrial() {
+function local_warpwire_setup_trial() {
     global $CFG;
 
     try {
@@ -334,10 +334,10 @@ function setuptrial() {
 
         if (strstr($ex->getMessage(), 'Client already exists')) {
             set_config('setup_status_message', get_string('notice_setup_error_client_exists', 'local_warpwire'), 'local_warpwire');
-            redirectandexit(get_string('notice_setup_error_client_exists', 'local_warpwire'));
+            local_warpwire_redirect_and_exit(get_string('notice_setup_error_client_exists', 'local_warpwire'));
         } else {
             set_config('setup_status_message', get_string('notice_setup_error', 'local_warpwire'), 'local_warpwire');
-            redirectandexit(get_string('notice_setup_error', 'local_warpwire'));
+            local_warpwire_redirect_and_exit(get_string('notice_setup_error', 'local_warpwire'));
         }
     }
 
@@ -357,10 +357,10 @@ function setuptrial() {
         set_config('setup_status', 'error', 'local_warpwire');
         set_config('setup_status_message', get_string('notice_setup_error_noretry', 'local_warpwire'), 'local_warpwire');
 
-        redirectandexit(get_string('notice_setup_error_noretry', 'local_warpwire'));
+        local_warpwire_redirect_and_exit(get_string('notice_setup_error_noretry', 'local_warpwire'));
     }
 
-    redirectandexit(get_string('notice_setup_success', 'local_warpwire'));
+    local_warpwire_redirect_and_exit(get_string('notice_setup_success', 'local_warpwire'));
 }
 
 /**
@@ -371,7 +371,7 @@ function setuptrial() {
  * @param string $message The message to display to the user before redirecting.
  * @return void
  */
-function redirectandexit($message) {
+function local_warpwire_redirect_and_exit($message) {
     global $OUTPUT, $returnurl;
 
     redirect($returnurl);
