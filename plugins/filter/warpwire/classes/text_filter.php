@@ -14,9 +14,11 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace filter_warpwire;
+use DOMDocument;
 defined('MOODLE_INTERNAL') || die('Invalid access');
 
-class filter_warpwire extends moodle_text_filter {
+class text_filter extends \core_filters\text_filter {
     /**
      * Main function for displaying embedded content in text.
      *
