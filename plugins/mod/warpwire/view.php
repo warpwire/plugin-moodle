@@ -64,6 +64,7 @@ if (empty($warpwireurl)) {
     $pageurl = $CFG->wwwroot . '/local/warpwire/html/setup.html';
 } else {
     $urlparts = parse_url($warpwireurl);
+    $urlparts['path'] = '/api/lti/';
 
     $parameters = [];
     if (!empty($urlparts['query'])) {
