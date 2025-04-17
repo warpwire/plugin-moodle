@@ -19,8 +19,8 @@ defined('MOODLE_INTERNAL') || die('Invalid access');
 $plugin = new stdClass();
 
 $plugin->component = 'local_warpwire';
-$plugin->version   = 2024102800;
-$plugin->release   = '5.0.0';
+$plugin->version   = 2025041701;
+$plugin->release   = '5.0.1';
 $plugin->maturity  = MATURITY_STABLE;
 $plugin->requires  = 2024100700.02;
 
