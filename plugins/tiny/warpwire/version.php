@@ -25,7 +25,11 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'tiny_warpwire';
-$plugin->release = '0.1.0';
-$plugin->version = 2025062600;
+$plugin->release = '4.2.0';
+$plugin->version = 2025071700;
 $plugin->requires = 2022112800;
-$plugin->maturity = MATURITY_ALPHA;
+$plugin->maturity = MATURITY_STABLE;
+
+$plugin->dependencies = [
+    'local_warpwire' => 2025071700,
+];

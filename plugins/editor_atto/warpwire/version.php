@@ -18,18 +18,18 @@
  * Atto text editor integration version file.
  *
  * @package    atto_warpwire
- * @copyright  2016 Warpwire, Inc.  <warpwire.com>
+ * @copyright  2025 Cadmium warpwire-support@gocadmium.com
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'atto_warpwire';
-$plugin->version   = 2025041700;
-$plugin->release   = '4.1.7';
+$plugin->version   = 2025071700;
+$plugin->release   = '4.2.0';
 $plugin->maturity  = MATURITY_STABLE;
 $plugin->requires  = 2019111800;
 
 $plugin->dependencies = [
-    'local_warpwire' => 2025041700,
+    'local_warpwire' => 2025071700,
 ];
