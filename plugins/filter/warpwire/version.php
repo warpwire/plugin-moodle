@@ -17,11 +17,11 @@
 defined('MOODLE_INTERNAL') || die('Invalid access');
 
 $plugin->component = 'filter_warpwire';
-$plugin->version   = 2025041701;
-$plugin->release   = '5.0.1';
+$plugin->version   = 2025071701;
+$plugin->release   = '5.1.0';
 $plugin->maturity  = MATURITY_STABLE;
 $plugin->requires  = 2024100700.02;
 
 $plugin->dependencies = [
-    'local_warpwire' => 2025041701,
+    'local_warpwire' => 2025071701,
 ];

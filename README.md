@@ -9,7 +9,7 @@ be in the **Assets** section.
 4. Click **Validate** on the next page.
 5. Click **Continue** on the next page.
 6. Click **Upgrade Moodle** on the next page.
-7. Repeat steps 2 through 6 for the remaining plugin Zip files in this order: `filter`, `editor_atto`, `editor_mce`, `mod`.
+7. Repeat steps 2 through 6 for the remaining plugin Zip files in this order: `filter`, `editor_atto`, `tiny`, `mod`.
 
 ## Configure
 1. Navigate to **Site Administration**, click the **Plugins** tab, and in the **Filters** section, click the **Manage Filters** link.

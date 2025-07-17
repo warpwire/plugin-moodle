@@ -18,19 +18,19 @@
  * Defines the version and other meta-info about the Warpwire Activity Module
  *
  * @package    mod_warpwire
- * @copyright  2016 Warpwire <https://warpwire.com>
+ * @copyright  2025 Cadmium warpwire-support@gocadmium.com
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'mod_warpwire';
-$plugin->version   = 2025041701;
-$plugin->release   = '5.0.1';
+$plugin->version   = 2025071701;
+$plugin->release   = '5.1.0';
 $plugin->maturity  = MATURITY_STABLE;
 $plugin->requires  = 2024100700.02;
 $plugin->cron      = 0;
 
 $plugin->dependencies = [
-    'local_warpwire' => 2025041701,
+    'local_warpwire' => 2025071701,
 ];
