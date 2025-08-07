@@ -20,7 +20,7 @@ $plugin = new stdClass();
 
 $plugin->component = 'local_warpwire';
 $plugin->version   = 2025071700;
-$plugin->release   = '4.2.0';
+$plugin->release   = '4.2.1';
 $plugin->maturity  = MATURITY_STABLE;
 $plugin->requires  = 2019111800;
 
